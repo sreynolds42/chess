@@ -220,6 +220,26 @@ public class ChessPiece {
         return legalMoves;
     }
 
+    private Collection<ChessMove> checkKing(ChessBoard board, ChessPosition myPosition){
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+        int kingHops[][] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+
+        for(int[] kingHop : kingHops) {
+            int row = myPosition.getRow() + kingHop[0];
+            int col = myPosition.getColumn() + kingHop[1];
+
+            if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
+                ChessPosition checkPosition = new ChessPosition(row, col);
+                if (board.getPiece(checkPosition) == null) {
+                    legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                } else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()) {
+                    legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                }
+            }
+        }
+        return legalMoves;
+    }
+
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(type == PieceType.KING){
