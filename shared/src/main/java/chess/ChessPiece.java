@@ -240,6 +240,64 @@ public class ChessPiece {
         return legalMoves;
     }
 
+    private Collection<ChessMove> checkPawn(ChessBoard board, ChessPosition myPosition){
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+        int d = 1;
+        if(getTeamColor() == ChessGame.TeamColor.BLACK){
+            d = -1;
+        }
+
+        int nextRow = myPosition.getRow() + d;
+        ChessPosition step = new ChessPosition(nextRow, myPosition.getColumn());
+
+        double openDouble = (4.5 - (2.5 * d));
+        int open = (int) openDouble;
+
+        if(board.getPiece(step) == null){
+            addPawnMoves(legalMoves, myPosition, step, nextRow);
+
+            if(myPosition.getRow() == open){
+                ChessPosition hop = new ChessPosition(myPosition.getRow() + (2 * d), myPosition.getColumn());
+                if (board.getPiece(hop) == null) {
+                    legalMoves.add(new ChessMove(myPosition, hop, null));
+                }
+            }
+        }
+
+    // diag left
+        int eatLeftCol = myPosition.getColumn() - 1;
+        if (eatLeftCol >= 1) {
+            ChessPosition eatLeft = new ChessPosition(nextRow, eatLeftCol);
+            ChessPiece target = board.getPiece(eatLeft);
+            if (target != null && target.getTeamColor() != getTeamColor()) {
+                addPawnMoves(legalMoves, myPosition, eatLeft, nextRow);
+            }
+        }
+
+    // diag right
+        int eatRightCol = myPosition.getColumn() + 1;
+        if (eatRightCol <= 8) {
+            ChessPosition eatRight = new ChessPosition(nextRow, eatRightCol);
+            ChessPiece target = board.getPiece(eatRight);
+            if (target != null && target.getTeamColor() != getTeamColor()) {
+                addPawnMoves(legalMoves, myPosition, eatRight, nextRow);
+            }
+        }
+
+        return legalMoves;
+    }
+
+    private void addPawnMoves(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, int checkPosition) {
+        if (checkPosition == 8 || checkPosition == 1) {
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.QUEEN));
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.ROOK));
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.BISHOP));
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.KNIGHT));
+        } else {
+            moves.add(new ChessMove(start, end, null));
+        }
+    }
+
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(type == PieceType.KING){
