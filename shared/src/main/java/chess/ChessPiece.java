@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -11,8 +12,8 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor color;
-    private ChessPiece.PieceType type;
+    private final ChessGame.TeamColor color;
+    private final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
@@ -50,6 +51,160 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    private Collection<ChessMove> checkCross(ChessBoard board, ChessPosition myPosition){
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+        //going right
+        int col = myPosition.getColumn() + 1;
+        while (col <= 8){
+            ChessPosition checkPosition = new ChessPosition(myPosition.getRow(), col);
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            col++;
+        }
+        //going left
+        col = myPosition.getColumn() - 1;
+        while (col >= 1){
+            ChessPosition checkPosition = new ChessPosition(myPosition.getRow(), col);
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            col--;
+        }
+        //going down
+        int row = myPosition.getRow() + 1;
+        while (row <= 8){
+            ChessPosition checkPosition = new ChessPosition(row, myPosition.getColumn());
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            row++;
+        }
+        //going up
+        row = myPosition.getRow() - 1;
+        while (row >= 1){
+            ChessPosition checkPosition = new ChessPosition(row, myPosition.getColumn());
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            row--;
+        }
+
+        return legalMoves;
+
+    }
+
+    private Collection<ChessMove> checkDiagonal(ChessBoard board, ChessPosition myPosition){
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+        //going upright
+        int col = myPosition.getColumn() + 1;
+        int row = myPosition.getRow() + 1;
+        while (col <= 8 && row <=8){
+            ChessPosition checkPosition = new ChessPosition(row, col);
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            col++;
+            row++;
+        }
+        //going downright
+        col = myPosition.getColumn() + 1;
+        row = myPosition.getRow() - 1;
+        while (col <= 8 && row >= 1){
+            ChessPosition checkPosition = new ChessPosition(row, col);
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            col++;
+            row--;
+        }
+        //going upleft
+        col = myPosition.getColumn() - 1;
+        row = myPosition.getRow() + 1;
+        while (col >= 1 && row <= 8){
+            ChessPosition checkPosition = new ChessPosition(row, col);
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            col--;
+            row++;
+        }
+        //going downleft
+        col = myPosition.getColumn() - 1;
+        row = myPosition.getRow() - 1;
+        while (col >= 1 && row >= 1){
+            ChessPosition checkPosition = new ChessPosition(row, col);
+            if(board.getPiece(checkPosition) == null){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+            }
+            else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()){
+                legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                break;
+            }
+            else{
+                break;
+            }
+            col--;
+            row--;
+        }
+
+        return legalMoves;
+    }
+
+    private Collection<ChessMove> checkHorse(ChessBoard board, ChessPosition myPosition){
+        return null;
+    }
+
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(type == PieceType.KING){
             //oob check
