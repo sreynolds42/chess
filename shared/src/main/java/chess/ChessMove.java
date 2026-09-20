@@ -50,7 +50,7 @@ public class ChessMove {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove that = (ChessMove) o;
-        return this.startPosition == that.startPosition && this.endPosition == that.endPosition && this.promotionPiece == that.promotionPiece;
+        return Objects.equals(this.startPosition, that.startPosition) && Objects.equals(this.endPosition, that.endPosition) && Objects.equals(this.promotionPiece, that.promotionPiece);
     }
 
     @Override
