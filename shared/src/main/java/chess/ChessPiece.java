@@ -201,7 +201,23 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> checkHorse(ChessBoard board, ChessPosition myPosition){
-        return null;
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+        int horseEpicMoves[][] = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},{1, 2}, {1, -2}, {-1, 2}, {-1, -2}};
+
+        for(int[] horseJump : horseEpicMoves) {
+            int row = myPosition.getRow() + horseJump[0];
+            int col = myPosition.getColumn() + horseJump[1];
+
+            if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
+                ChessPosition checkPosition = new ChessPosition(row, col);
+                if (board.getPiece(checkPosition) == null) {
+                    legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                } else if (board.getPiece(checkPosition).getTeamColor() != this.getTeamColor()) {
+                    legalMoves.add(new ChessMove(myPosition, checkPosition, null));
+                }
+            }
+        }
+        return legalMoves;
     }
 
 
