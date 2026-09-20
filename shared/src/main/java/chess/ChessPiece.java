@@ -301,22 +301,24 @@ public class ChessPiece {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(type == PieceType.KING){
-            //oob check
+            return checkKing(board, myPosition);
         }
         if(type == PieceType.QUEEN){
-            //oob check
+            Collection<ChessMove> moves = checkCross(board, myPosition);
+            moves.addAll(checkDiagonal(board, myPosition));
+            return moves;
         }
         if(type == PieceType.BISHOP){
-            //oob check
+            return checkDiagonal(board, myPosition);
         }
         if(type == PieceType.ROOK){
-            //oob check
+            return checkCross(board, myPosition);
         }
         if(type == PieceType.KNIGHT){
-            //oob check
+            return checkHorse(board, myPosition);
         }
         if(type == PieceType.PAWN){
-            //oob check
+            return checkPawn(board, myPosition);
         }
         throw new RuntimeException("Catastrophic Failure");
     }
