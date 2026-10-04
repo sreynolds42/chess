@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -52,8 +53,34 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         // work on check
+        ChessPiece piece = game.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
 
-        return game.getPiece(startPosition).pieceMoves(game, startPosition);
+        TeamColor teamColor = piece.getTeamColor();
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        for (ChessMove move : piece.pieceMoves(game, startPosition)) {
+            ChessBoard sim = new ChessBoard(game);
+
+            if (move.getPromotionPiece() != null) {
+                sim.addPiece(move.getEndPosition(), new ChessPiece(teamColor, move.getPromotionPiece()));
+            } else {
+                sim.addPiece(move.getEndPosition(), piece);
+            }
+            sim.addPiece(move.getStartPosition(), null);
+
+            ChessBoard temp = game;
+            game = sim;
+
+            if (!isInCheck(teamColor)) {
+                validMoves.add(move);
+            }
+            game = temp;
+        }
+
+        return validMoves;
     }
 
     /**
