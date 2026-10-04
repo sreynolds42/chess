@@ -61,17 +61,44 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (simMove(move)){
-            game.addPiece(move.getEndPosition(), game.getPiece(move.getStartPosition()));
-            game.addPiece(move.getStartPosition(), null);
+        if (!simMove(move)) {
+            throw new InvalidMoveException();
+        }
+
+        ChessPiece piece = game.getPiece(move.getStartPosition());
+
+        if (move.getPromotionPiece() != null) {
+            game.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+        } else {
+            game.addPiece(move.getEndPosition(), piece);
+        }
+        game.addPiece(move.getStartPosition(), null);
+
+        if (getTeamTurn() == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
         }
     }
 
     private boolean simMove(ChessMove move){
-        ChessBoard sim = game;
+        ChessPiece piece = game.getPiece(move.getStartPosition());
+
+        if (piece == null || piece.getTeamColor() != getTeamTurn()) {
+            return false;
+        }
+
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        if (valid == null || !valid.contains(move)) {
+            return false;
+        }
+
+        ChessBoard sim = new ChessBoard(game);
         sim.addPiece(move.getEndPosition(), sim.getPiece(move.getStartPosition()));
         sim.addPiece(move.getStartPosition(), null);
-        return isInCheck(sim.getPiece(move.getStartPosition()).getTeamColor());
+
+        return !isInCheck(piece.getTeamColor());
+
     }
 
     /**
