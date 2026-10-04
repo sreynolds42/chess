@@ -190,6 +190,27 @@ public class ChessGame {
                 }
             }
         }
+        //black
+        if(game.getPiece(myPosition).getTeamColor() == TeamColor.BLACK){
+            //right
+            if(!blackKingMoved && !blackRookRightMoved){
+                if(game.getPiece(new ChessPosition(8, 6)) == null && game.getPiece(new ChessPosition(8, 7)) == null){
+                    if (castleClear(new ChessPosition(8, 6), TeamColor.BLACK) && castleClear(new ChessPosition(8, 7), TeamColor.BLACK)) {
+                        legal.add(new ChessMove(myPosition, new ChessPosition(8, 7), null));
+                    }
+                }
+            }
+            //left
+            if(!blackKingMoved && !blackRookLeftMoved){
+                if(game.getPiece(new ChessPosition(8, 4)) == null && game.getPiece(new ChessPosition(8, 3)) == null && game.getPiece(new ChessPosition(8, 2)) == null){
+                    if (castleClear(new ChessPosition(8, 4), TeamColor.BLACK) && castleClear(new ChessPosition(8, 3), TeamColor.BLACK)) {
+                        legal.add(new ChessMove(myPosition, new ChessPosition(8, 3), null));
+                    }
+                }
+            }
+        }
+
+
     }
 
     private boolean castleClear(ChessPosition checkPos, TeamColor teamColor) {
