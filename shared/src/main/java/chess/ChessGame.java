@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -66,17 +67,17 @@ public class ChessGame {
         }
 
         TeamColor teamColor = piece.getTeamColor();
-        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> validMoves = new HashSet<>();
 
         for (ChessMove move : piece.pieceMoves(game, startPosition)) {
             ChessBoard sim = new ChessBoard(game);
 
+            sim.addPiece(move.getStartPosition(), null);
             if (move.getPromotionPiece() != null) {
                 sim.addPiece(move.getEndPosition(), new ChessPiece(teamColor, move.getPromotionPiece()));
             } else {
                 sim.addPiece(move.getEndPosition(), piece);
             }
-            sim.addPiece(move.getStartPosition(), null);
 
             ChessBoard temp = game;
             game = sim;
@@ -86,11 +87,6 @@ public class ChessGame {
             }
             game = temp;
         }
-
-        if (piece.getPieceType() == ChessPiece.PieceType.KING) {
-            castle(startPosition, validMoves);
-        }
-
         return validMoves;
     }
 
@@ -140,6 +136,25 @@ public class ChessGame {
             game.addPiece(move.getEndPosition(), piece);
         }
         game.addPiece(move.getStartPosition(), null);
+
+        if (piece.getPieceType() == ChessPiece.PieceType.KING &&
+                Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2) {
+
+            int row = move.getStartPosition().getRow();
+
+            // castle right
+            if (move.getEndPosition().getColumn() == 7) {
+                ChessPiece rook = game.getPiece(new ChessPosition(row, 8));
+                game.addPiece(new ChessPosition(row, 6), rook);
+                game.addPiece(new ChessPosition(row, 8), null);
+            }
+            // castle left
+            else if (move.getEndPosition().getColumn() == 3) {
+                ChessPiece rook = game.getPiece(new ChessPosition(row, 1));
+                game.addPiece(new ChessPosition(row, 4), rook);
+                game.addPiece(new ChessPosition(row, 1), null);
+            }
+        }
 
         if (getTeamTurn() == TeamColor.WHITE) {
             setTeamTurn(TeamColor.BLACK);
