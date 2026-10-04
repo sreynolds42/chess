@@ -166,24 +166,50 @@ public class ChessGame {
     }
 
 
-    private void castle(ChessPosition myPositon, Collection<ChessMove> legal){
-        if(isInCheck(game.getPiece(myPositon).getTeamColor())){
+    private void castle(ChessPosition myPosition, Collection<ChessMove> legal){
+        if(isInCheck(game.getPiece(myPosition).getTeamColor())){
             return;
         }
 
         //white
-        if(game.getPiece(myPositon).getTeamColor() == TeamColor.WHITE){
+        if(game.getPiece(myPosition).getTeamColor() == TeamColor.WHITE){
             //right
             if(!whiteKingMoved && !whiteRookRightMoved){
                 if(game.getPiece(new ChessPosition(1, 6)) == null && game.getPiece(new ChessPosition(1, 7)) == null){
-                    if { //check that in between isnt in check
-
-                        legal.add(new ChessMove(myPositon, new ChessPosition(1, 7), null));
+                    if (castleClear(new ChessPosition(1, 6), TeamColor.WHITE) && castleClear(new ChessPosition(1, 7), TeamColor.WHITE)) {
+                        legal.add(new ChessMove(myPosition, new ChessPosition(1, 7), null));
                     }
                 }
-
+            }
+            //left
+            if(!whiteKingMoved && !whiteRookLeftMoved){
+                if(game.getPiece(new ChessPosition(1, 4)) == null && game.getPiece(new ChessPosition(1, 3)) == null && game.getPiece(new ChessPosition(1, 2)) == null){
+                    if (castleClear(new ChessPosition(1, 4), TeamColor.WHITE) && castleClear(new ChessPosition(1, 3), TeamColor.WHITE)) {
+                        legal.add(new ChessMove(myPosition, new ChessPosition(1, 3), null));
+                    }
+                }
             }
         }
+    }
+
+    private boolean castleClear(ChessPosition checkPos, TeamColor teamColor) {
+        for (int r = 1; r <= 8; r++) {
+            for (int c = 1; c <= 8; c++) {
+                ChessPosition currentPos = new ChessPosition(r, c);
+                ChessPiece piece = game.getPiece(currentPos);
+
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> enemyMoves = piece.pieceMoves(game, currentPos);
+
+                    for (ChessMove move : enemyMoves) {
+                        if (move.getEndPosition().equals(checkPos)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
