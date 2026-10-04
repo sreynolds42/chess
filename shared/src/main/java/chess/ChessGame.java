@@ -113,21 +113,22 @@ public class ChessGame {
             }
         }
 
-        // left white rook
-        if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
-            if(move.getStartPosition().equals(new ChessPosition(1, 1))) {
-                whiteRookLeftMoved = true;
-            }
-            else if(move.getStartPosition().equals(new ChessPosition(1, 8))) {
-                whiteRookRightMoved = true;
-            }
-            else if(move.getStartPosition().equals(new ChessPosition(8, 1))) {
-                blackRookLeftMoved = true;
-            }
-            else if(move.getStartPosition().equals(new ChessPosition(8, 8))) {
-                blackRookRightMoved = true;
-            }
+        // rook moves check 4 casting
+        if (move.getStartPosition().equals(new ChessPosition(1, 1)) || move.getEndPosition().equals(new ChessPosition(1, 1))) {
+            whiteRookLeftMoved = true;
         }
+        if (move.getStartPosition().equals(new ChessPosition(1, 8)) || move.getEndPosition().equals(new ChessPosition(1, 8))) {
+            whiteRookRightMoved = true;
+        }
+        if (move.getStartPosition().equals(new ChessPosition(8, 1)) || move.getEndPosition().equals(new ChessPosition(8, 1))) {
+            blackRookLeftMoved = true;
+        }
+        if (move.getStartPosition().equals(new ChessPosition(8, 8)) || move.getEndPosition().equals(new ChessPosition(8, 8))) {
+            blackRookRightMoved = true;
+        }
+
+
+
 
         if (move.getPromotionPiece() != null) {
             game.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
@@ -162,6 +163,27 @@ public class ChessGame {
 
         return !isInCheck(piece.getTeamColor());
 
+    }
+
+
+    private void castle(ChessPosition myPositon, Collection<ChessMove> legal){
+        if(isInCheck(game.getPiece(myPositon).getTeamColor())){
+            return;
+        }
+
+        //white
+        if(game.getPiece(myPositon).getTeamColor() == TeamColor.WHITE){
+            //right
+            if(!whiteKingMoved && !whiteRookRightMoved){
+                if(game.getPiece(new ChessPosition(1, 6)) == null && game.getPiece(new ChessPosition(1, 7)) == null){
+                    if { //check that in between isnt in check
+
+                        legal.add(new ChessMove(myPositon, new ChessPosition(1, 7), null));
+                    }
+                }
+
+            }
+        }
     }
 
     /**
