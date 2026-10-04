@@ -20,7 +20,7 @@ public class ChessGame {
     private boolean whiteRookRightMoved = false;
     private boolean blackRookLeftMoved = false;
     private boolean blackRookRightMoved = false;
-    private ChessMove lastMove = null;
+    private final ChessMove lastMove = null;
 
     public ChessGame() {
         game.resetBoard();
@@ -85,6 +85,10 @@ public class ChessGame {
                 validMoves.add(move);
             }
             game = temp;
+        }
+
+        if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+            castle(startPosition, validMoves);
         }
 
         return validMoves;
