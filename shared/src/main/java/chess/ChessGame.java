@@ -14,6 +14,13 @@ public class ChessGame {
 
     private TeamColor turn;
     private ChessBoard game = new ChessBoard();
+    private boolean whiteKingMoved = false;
+    private boolean blackKingMoved = false;
+    private boolean whiteRookLeftMoved = false;
+    private boolean whiteRookRightMoved = false;
+    private boolean blackRookLeftMoved = false;
+    private boolean blackRookRightMoved = false;
+    private ChessMove lastMove = null;
 
     public ChessGame() {
         game.resetBoard();
@@ -96,6 +103,32 @@ public class ChessGame {
 
         ChessPiece piece = game.getPiece(move.getStartPosition());
 
+        // check if the king is moving
+        if (piece.getPieceType() == ChessPiece.PieceType.KING){
+            if(piece.getTeamColor() == TeamColor.WHITE){
+                whiteKingMoved = true;
+            }
+            else{
+                blackKingMoved = true;
+            }
+        }
+
+        // left white rook
+        if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
+            if(move.getStartPosition().equals(new ChessPosition(1, 1))) {
+                whiteRookLeftMoved = true;
+            }
+            else if(move.getStartPosition().equals(new ChessPosition(1, 8))) {
+                whiteRookRightMoved = true;
+            }
+            else if(move.getStartPosition().equals(new ChessPosition(8, 1))) {
+                blackRookLeftMoved = true;
+            }
+            else if(move.getStartPosition().equals(new ChessPosition(8, 8))) {
+                blackRookRightMoved = true;
+            }
+        }
+
         if (move.getPromotionPiece() != null) {
             game.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
         } else {
@@ -108,6 +141,7 @@ public class ChessGame {
         } else {
             setTeamTurn(TeamColor.WHITE);
         }
+
     }
 
     private boolean simMove(ChessMove move){
@@ -246,12 +280,30 @@ public class ChessGame {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessGame chessGame = (ChessGame) o;
-        return turn == chessGame.turn && Objects.equals(game, chessGame.game);
+        return turn == chessGame.turn
+                && whiteKingMoved == chessGame.whiteKingMoved
+                && blackKingMoved == chessGame.blackKingMoved
+                && whiteRookLeftMoved == chessGame.whiteRookLeftMoved
+                && whiteRookRightMoved == chessGame.whiteRookRightMoved
+                && blackRookLeftMoved == chessGame.blackRookLeftMoved
+                && blackRookRightMoved == chessGame.blackRookRightMoved
+                && Objects.equals(game, chessGame.game)
+                && Objects.equals(lastMove, chessGame.lastMove);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(turn, game);
+        return Objects.hash(
+                turn,
+                game,
+                whiteKingMoved,
+                blackKingMoved,
+                whiteRookLeftMoved,
+                whiteRookRightMoved,
+                blackRookLeftMoved,
+                blackRookRightMoved,
+                lastMove
+        );
     }
 
 }
