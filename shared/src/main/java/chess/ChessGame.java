@@ -11,6 +11,7 @@ import java.util.Collection;
 public class ChessGame {
 
     private TeamColor turn;
+    private ChessBoard game = new ChessBoard();
 
     public ChessGame() {
 
@@ -48,7 +49,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        // work on check
+        return game.getPiece(startPosition).pieceMoves(game, startPosition);
     }
 
     /**
