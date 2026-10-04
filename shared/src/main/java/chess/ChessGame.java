@@ -21,6 +21,7 @@ public class ChessGame {
     private boolean whiteRookRightMoved = false;
     private boolean blackRookLeftMoved = false;
     private boolean blackRookRightMoved = false;
+    // for en passant that i didn't get to but would like to later on
     private final ChessMove lastMove = null;
 
     public ChessGame() {
@@ -67,9 +68,14 @@ public class ChessGame {
         }
 
         TeamColor teamColor = piece.getTeamColor();
+        Collection<ChessMove> candidateMoves = piece.pieceMoves(game, startPosition);
+        if (piece.getPieceType() == ChessPiece.PieceType.KING && startPosition.getColumn() == 5) {
+            castle(startPosition, candidateMoves);
+        }
+
         Collection<ChessMove> validMoves = new HashSet<>();
 
-        for (ChessMove move : piece.pieceMoves(game, startPosition)) {
+        for (ChessMove move : candidateMoves) {
             ChessBoard sim = new ChessBoard(game);
 
             sim.addPiece(move.getStartPosition(), null);
@@ -77,6 +83,15 @@ public class ChessGame {
                 sim.addPiece(move.getEndPosition(), new ChessPiece(teamColor, move.getPromotionPiece()));
             } else {
                 sim.addPiece(move.getEndPosition(), piece);
+            }
+
+            if (piece.getPieceType() == ChessPiece.PieceType.KING && move.getStartPosition().getColumn() == 5 && move.getEndPosition().getColumn() == 7) {
+                sim.addPiece(new ChessPosition(move.getStartPosition().getRow(), 6), sim.getPiece(new ChessPosition(move.getStartPosition().getRow(), 8)));
+                sim.addPiece(new ChessPosition(move.getStartPosition().getRow(), 8), null);
+            }
+            if (piece.getPieceType() == ChessPiece.PieceType.KING && move.getStartPosition().getColumn() == 5 && move.getEndPosition().getColumn() == 3) {
+                sim.addPiece(new ChessPosition(move.getStartPosition().getRow(), 4), sim.getPiece(new ChessPosition(move.getStartPosition().getRow(), 1)));
+                sim.addPiece(new ChessPosition(move.getStartPosition().getRow(), 1), null);
             }
 
             ChessBoard temp = game;
@@ -87,6 +102,7 @@ public class ChessGame {
             }
             game = temp;
         }
+
         return validMoves;
     }
 
@@ -172,16 +188,7 @@ public class ChessGame {
         }
 
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
-        if (valid == null || !valid.contains(move)) {
-            return false;
-        }
-
-        ChessBoard sim = new ChessBoard(game);
-        sim.addPiece(move.getEndPosition(), sim.getPiece(move.getStartPosition()));
-        sim.addPiece(move.getStartPosition(), null);
-
-        return !isInCheck(piece.getTeamColor());
-
+        return valid != null && valid.contains(move);
     }
 
 
@@ -239,9 +246,7 @@ public class ChessGame {
                 ChessPiece piece = game.getPiece(currentPos);
 
                 if (piece != null && piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> enemyMoves = piece.pieceMoves(game, currentPos);
-
-                    for (ChessMove move : enemyMoves) {
+                    for (ChessMove move : piece.pieceMoves(game, currentPos)) {
                         if (move.getEndPosition().equals(checkPos)) {
                             return false;
                         }
@@ -340,6 +345,12 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         game = board;
+        whiteKingMoved = false;
+        blackKingMoved = false;
+        whiteRookLeftMoved = false;
+        whiteRookRightMoved = false;
+        blackRookLeftMoved = false;
+        blackRookRightMoved = false;
         /*
         for(int r = 1; r <= 8; r++){
             for(int c = 1; c <= 8; c++) {
