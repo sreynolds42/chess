@@ -1,8 +1,5 @@
 package service;
 
-import dataaccess.*;
-import model.*;
-
 public class GameService {
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
