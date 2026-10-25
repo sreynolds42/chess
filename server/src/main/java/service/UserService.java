@@ -1,5 +1,7 @@
 package service;
 
+import dataaccess.*;
+
 import java.util.UUID;
 
 public class UserService {
