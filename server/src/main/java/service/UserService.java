@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import model.*;
 
 import java.util.UUID;
 
