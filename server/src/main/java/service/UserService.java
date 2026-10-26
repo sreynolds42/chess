@@ -22,6 +22,8 @@ public class UserService {
         gameDAO.clear();
     }
 
+
+
     public RegisterResult register(RegisterRequest req) throws DataAccessException {
         if (req.username() == null || req.password() == null || req.email() == null ||
                 req.username().isBlank() || req.password().isBlank() || req.email().isBlank()) {
@@ -43,6 +45,11 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest req) throws DataAccessException {
+        if (req.username() == null || req.password() == null ||
+                req.username().isBlank() || req.password().isBlank()) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         UserData user = userDAO.getUser(req.username());
         if (user == null || !user.password().equals(req.password())) {
             throw new DataAccessException("Error: unauthorized");
