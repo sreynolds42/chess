@@ -238,16 +238,21 @@ public class ChessGame {
                 ChessPosition currentPos = new ChessPosition(r, c);
                 ChessPiece piece = game.getPiece(currentPos);
 
-                if (piece != null && piece.getTeamColor() != teamColor) {
-                    for (ChessMove move : piece.pieceMoves(game, currentPos)) {
-                        if (move.getEndPosition().equals(checkPos)) {
-                            return false;
-                        }
-                    }
+                if (piece != null && piece.getTeamColor() != teamColor && isAttacking(piece, currentPos, checkPos)) {
+                    return false;
                 }
             }
         }
         return true;
+    }
+
+    private boolean isAttacking(ChessPiece piece, ChessPosition currentPos, ChessPosition checkPos) {
+        for (ChessMove move : piece.pieceMoves(game, currentPos)) {
+            if (move.getEndPosition().equals(checkPos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -261,8 +266,10 @@ public class ChessGame {
     private ChessPosition kingFind(TeamColor teamColor){
         for(int r = 1; r <= 8; r++){
             for(int c = 1; c <= 8; c++){
-                if(game.getPiece(new ChessPosition(r, c)) != null && game.getPiece(new ChessPosition(r, c)).getTeamColor() == teamColor && game.getPiece(new ChessPosition(r, c)).getPieceType() == ChessPiece.PieceType.KING){
-                    return new ChessPosition(r, c);
+                ChessPosition pos = new ChessPosition(r, c);
+                ChessPiece piece = game.getPiece(pos);
+                if(piece != null && piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING){
+                    return pos;
                 }
             }
         }
@@ -275,12 +282,11 @@ public class ChessGame {
 
         for(int r = 1; r <= 8; r++){
             for(int c = 1; c <= 8; c++){
-                if(game.getPiece(new ChessPosition(r, c)) != null && game.getPiece(new ChessPosition(r, c)).getTeamColor() != teamColor){
-                    for(ChessMove move : game.getPiece(new ChessPosition(r, c)).pieceMoves(game, new ChessPosition(r, c))){
-                        if(move.getEndPosition().equals(kingSpot)){
-                            return true;
-                        }
-                    }
+                ChessPosition currentPos = new ChessPosition(r, c);
+                ChessPiece piece = game.getPiece(currentPos);
+
+                if(piece != null && piece.getTeamColor() != teamColor && isAttacking(piece, currentPos, kingSpot)){
+                    return true;
                 }
             }
         }
