@@ -203,45 +203,32 @@ public class ChessGame {
 
 
     private void castle(ChessPosition myPosition, Collection<ChessMove> legal){
-        if(isInCheck(game.getPiece(myPosition).getTeamColor())){
+        TeamColor teamColor = game.getPiece(myPosition).getTeamColor();
+        if(isInCheck(teamColor)){
             return;
         }
 
-        TeamColor teamColor = game.getPiece(myPosition).getTeamColor();
         int row = teamColor == TeamColor.WHITE ? 1 : 8;
+        boolean kingMoved = teamColor == TeamColor.WHITE ? whiteKingMoved : blackKingMoved;
+        boolean rookRightMoved = teamColor == TeamColor.WHITE ? whiteRookRightMoved : blackRookRightMoved;
+        boolean rookLeftMoved = teamColor == TeamColor.WHITE ? whiteRookLeftMoved : blackRookLeftMoved;
 
-        if (teamColor == TeamColor.WHITE) {
-            if(!whiteKingMoved && !whiteRookRightMoved &&
-                    game.getPiece(new ChessPosition(row, 6)) == null &&
-                    game.getPiece(new ChessPosition(row, 7)) == null &&
-                    castleClear(new ChessPosition(row, 6), TeamColor.WHITE) &&
-                    castleClear(new ChessPosition(row, 7), TeamColor.WHITE)){
-                legal.add(new ChessMove(myPosition, new ChessPosition(row, 7), null));
-            }
-            if(!whiteKingMoved && !whiteRookLeftMoved &&
-                    game.getPiece(new ChessPosition(row, 4)) == null &&
-                    game.getPiece(new ChessPosition(row, 3)) == null &&
-                    game.getPiece(new ChessPosition(row, 2)) == null &&
-                    castleClear(new ChessPosition(row, 4), TeamColor.WHITE) &&
-                    castleClear(new ChessPosition(row, 3), TeamColor.WHITE)){
-                legal.add(new ChessMove(myPosition, new ChessPosition(row, 3), null));
-            }
-        } else {
-            if(!blackKingMoved && !blackRookRightMoved &&
-                    game.getPiece(new ChessPosition(row, 6)) == null &&
-                    game.getPiece(new ChessPosition(row, 7)) == null &&
-                    castleClear(new ChessPosition(row, 6), TeamColor.BLACK) &&
-                    castleClear(new ChessPosition(row, 7), TeamColor.BLACK)){
-                legal.add(new ChessMove(myPosition, new ChessPosition(row, 7), null));
-            }
-            if(!blackKingMoved && !blackRookLeftMoved &&
-                    game.getPiece(new ChessPosition(row, 4)) == null &&
-                    game.getPiece(new ChessPosition(row, 3)) == null &&
-                    game.getPiece(new ChessPosition(row, 2)) == null &&
-                    castleClear(new ChessPosition(row, 4), TeamColor.BLACK) &&
-                    castleClear(new ChessPosition(row, 3), TeamColor.BLACK)){
-                legal.add(new ChessMove(myPosition, new ChessPosition(row, 3), null));
-            }
+        boolean rightClear = game.getPiece(new ChessPosition(row, 6)) == null &&
+                game.getPiece(new ChessPosition(row, 7)) == null &&
+                castleClear(new ChessPosition(row, 6), teamColor) &&
+                castleClear(new ChessPosition(row, 7), teamColor);
+
+        boolean leftClear = game.getPiece(new ChessPosition(row, 4)) == null &&
+                game.getPiece(new ChessPosition(row, 3)) == null &&
+                game.getPiece(new ChessPosition(row, 2)) == null &&
+                castleClear(new ChessPosition(row, 4), teamColor) &&
+                castleClear(new ChessPosition(row, 3), teamColor);
+
+        if(!kingMoved && !rookRightMoved && rightClear){
+            legal.add(new ChessMove(myPosition, new ChessPosition(row, 7), null));
+        }
+        if(!kingMoved && !rookLeftMoved && leftClear){
+            legal.add(new ChessMove(myPosition, new ChessPosition(row, 3), null));
         }
     }
 

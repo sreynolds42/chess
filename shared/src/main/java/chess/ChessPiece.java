@@ -117,6 +117,17 @@ public class ChessPiece {
         return legal;
     }
 
+    private void addPawnMove(ChessPosition myPosition, ChessPosition checkPos, Collection<ChessMove> legal) {
+        if (checkPos.getRow() == 8 || checkPos.getRow() == 1) {
+            legal.add(new ChessMove(myPosition, checkPos, PieceType.BISHOP));
+            legal.add(new ChessMove(myPosition, checkPos, PieceType.QUEEN));
+            legal.add(new ChessMove(myPosition, checkPos, PieceType.ROOK));
+            legal.add(new ChessMove(myPosition, checkPos, PieceType.KNIGHT));
+        } else {
+            legal.add(new ChessMove(myPosition, checkPos, null));
+        }
+    }
+
     public Collection<ChessMove> evilAhhPawns(ChessBoard board, ChessPosition myPosition){
         Collection<ChessMove> legal = new ArrayList<>();
         int d = 1;
@@ -127,14 +138,7 @@ public class ChessPiece {
         for (int c = myPosition.getColumn() - 1; c <= myPosition.getColumn() + 1; c += 2){
             ChessPosition checkPos = new ChessPosition(myPosition.getRow() + d, c);
             if (c >= 1 && c <= 8 && board.getPiece(checkPos) != null && board.getPiece(checkPos).pieceColor != pieceColor){
-                if (checkPos.getRow() == 8 || checkPos.getRow() == 1){
-                    legal.add(new ChessMove(myPosition, checkPos, PieceType.BISHOP));
-                    legal.add(new ChessMove(myPosition, checkPos, PieceType.QUEEN));
-                    legal.add(new ChessMove(myPosition, checkPos, PieceType.ROOK));
-                    legal.add(new ChessMove(myPosition, checkPos, PieceType.KNIGHT));
-                } else {
-                    legal.add(new ChessMove(myPosition, checkPos, null));
-                }
+                addPawnMove(myPosition, checkPos, legal);
             }
         }
 
@@ -147,14 +151,7 @@ public class ChessPiece {
 
         if (board.getPiece(new ChessPosition(myPosition.getRow() + d, myPosition.getColumn())) == null) {
             ChessPosition checkPos = new ChessPosition(myPosition.getRow() + d, myPosition.getColumn());
-            if (checkPos.getRow() == 8 || checkPos.getRow() == 1) {
-                legal.add(new ChessMove(myPosition, checkPos, PieceType.BISHOP));
-                legal.add(new ChessMove(myPosition, checkPos, PieceType.QUEEN));
-                legal.add(new ChessMove(myPosition, checkPos, PieceType.ROOK));
-                legal.add(new ChessMove(myPosition, checkPos, PieceType.KNIGHT));
-            } else {
-                legal.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + d, myPosition.getColumn()), null));
-            }
+            addPawnMove(myPosition, checkPos, legal);
         }
 
         return legal;
