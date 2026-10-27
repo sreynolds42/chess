@@ -24,49 +24,15 @@ public class UserService {
 
 
 
-    public RegisterResult register(RegisterRequest req) throws DataAccessException {
-        if (req.username() == null || req.password() == null || req.email() == null ||
-                req.username().isBlank() || req.password().isBlank() || req.email().isBlank()) {
-            throw new DataAccessException("Error: bad request");
-        }
-
-        if (userDAO.getUser(req.username()) != null) {
-            throw new DataAccessException("Error: already taken");
-        }
-
-        UserData userData = new UserData(req.username(), req.password(), req.email());
-        userDAO.insertUser(userData);
-
-        String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken, req.username());
-        authDAO.createAuth(authData);
-
-        return new RegisterResult(req.username(), authToken);
+    public RegisterResult register(RegisterRequest request) throws DataAccessException {
+        if(request.username() == null || request.password() == null || request.email() == null)
     }
 
     public LoginResult login(LoginRequest req) throws DataAccessException {
-        if (req.username() == null || req.password() == null ||
-                req.username().isBlank() || req.password().isBlank()) {
-            throw new DataAccessException("Error: bad request");
-        }
 
-        UserData user = userDAO.getUser(req.username());
-        if (user == null || !user.password().equals(req.password())) {
-            throw new DataAccessException("Error: unauthorized");
-        }
-
-        String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken, req.username());
-        authDAO.createAuth(authData);
-
-        return new LoginResult(req.username(), authToken);
     }
 
     public void logout(LogoutRequest req) throws DataAccessException {
-        AuthData auth = authDAO.getAuth(req.authToken());
-        if (auth == null) {
-            throw new DataAccessException("Error: unauthorized");
-        }
-        authDAO.deleteAuth(req.authToken());
+
     }
 }
