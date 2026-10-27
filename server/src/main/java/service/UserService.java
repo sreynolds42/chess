@@ -46,8 +46,16 @@ public class UserService {
 
     }
 
-    public LoginResult login(LoginRequest req) throws DataAccessException {
-
+    public LoginResult login(LoginRequest request) throws DataAccessException {
+        if(request.username() == null || request.password() == null){
+            throw new DataAccessException("Error: bad request");
+        }
+        else if(request.username().isBlank() || request.password().isBlank()){
+            throw new DataAccessException("Error: bad request");
+        }
+        else if(userDAO.getUser(request.username()) != null || request.password() != userDAO.getUser(request.username()).password()){
+            throw new DataAccessException("Error: unauthorized");
+        }
     }
 
     public void logout(LogoutRequest req) throws DataAccessException {
