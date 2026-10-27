@@ -34,6 +34,16 @@ public class UserService {
         else if(userDAO.getUser(request.username()) != null){
             throw new DataAccessException("Error: already taken");
         }
+
+        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        userDAO.insertUser(newUser);
+
+        String token = UUID.randomUUID().toString();
+        AuthData data = new AuthData(token, request.username());
+        authDAO.createAuth(data);
+
+        return new RegisterResult(request.username(), token);
+
     }
 
     public LoginResult login(LoginRequest req) throws DataAccessException {
