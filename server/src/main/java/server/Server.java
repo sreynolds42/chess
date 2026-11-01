@@ -18,6 +18,16 @@ public class Server {
     private final GameService gameService = new GameService(authDAO, gameDAO);
 
     public Server() {
+
+        // phase 4 SQL initialization
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.createSQLTables();
+        } catch (DataAccessException exception) {
+            throw new RuntimeException("Failed to initialize database", eexception);
+        }
+
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         javalin.delete("/db", this::clear);
