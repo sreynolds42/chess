@@ -50,4 +50,17 @@ public class SQLUserDAO implements UserDAO {
         }
         return null;
     }
+    @Override
+    public void clear() throws DataAccessException {
+        // nukes table
+        String sql = "TRUNCATE user";
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var preparedStatement = connection.prepareStatement(sql)) {
+                // runs the nuke
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("failed to clear user table", exception);
+        }
+    }
 }
