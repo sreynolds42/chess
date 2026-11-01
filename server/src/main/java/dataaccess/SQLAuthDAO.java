@@ -58,9 +58,21 @@ public class SQLAuthDAO implements AuthDAO {
                 // runs it
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
-            throw new DataAccessException("failed to delete auth token", ex);
+        } catch (SQLException exception) {
+            throw new DataAccessException("failed to delete auth token", exception);
         }
     }
 
+    @Override
+    public void clear() throws DataAccessException {
+        // writes clear command (NOT EMPTY TO BE FILLED IN THIS TIME)
+        String sql = "TRUNCATE auth";
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("failed to clear auth table", exception);
+        }
+    }
 }
