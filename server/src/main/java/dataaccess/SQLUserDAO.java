@@ -25,4 +25,29 @@ public class SQLUserDAO implements UserDAO {
             throw new DataAccessException("failed to create user", ex);
         }
     }
+
+    @Override
+    public UserData getUser(String username) throws DataAccessException {
+        // writes empty command, this one searches based on username
+        String sql = "SELECT username, password, email FROM user WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(sql)) {
+                // fills in command details
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+
+                    // cchecks if matching user is found and returns it
+                    if (rs.next()) {
+                        String foundUsername = rs.getString("username");
+                        String hashedPassword = rs.getString("password");
+                        String email = rs.getString("email");
+                        return new UserData(foundUsername, hashedPassword, email);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to get user", ex);
+        }
+        return null;
+    }
 }
