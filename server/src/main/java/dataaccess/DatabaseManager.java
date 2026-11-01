@@ -49,6 +49,19 @@ public class DatabaseManager {
                     primary KEY (authToken)
                     )
                 """;
+        // makes game table with an incrementing id as the categorizer
+        // stores the usernames of each side, names the game, and has game to store the actual game
+        String gameSQLTable = """
+                CREATE TABLE IF NOT EXISTS game (
+                    id INT NOT NULL AUTO_INCREMENT,
+                    whiteUsername VARCHAR(250),
+                    blackUsername VARCHAR(250),
+                    gameName VARCHAR(250) NOT NULL,
+                    game TEXT NOT NULL,
+                    PRIMARY KEY (id)
+                    )
+                """;
+
 
     }
 
