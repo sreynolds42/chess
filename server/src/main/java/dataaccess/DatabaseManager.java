@@ -40,6 +40,15 @@ public class DatabaseManager {
                     primary KEY (username)
                     )
                 """;
+        // this does the same thing as the last table, but for authentication
+        // the email or password isnt included, and the categorizer is authToken
+        String authSQLTable = """
+                CREATE TABLE IF NOT EXISTS auth (
+                    authToken VARCHAR(250) NOT NULL,
+                    username VARCHAR(250) NOT NULL,
+                    primary KEY (authToken)
+                    )
+                """;
 
     }
 
