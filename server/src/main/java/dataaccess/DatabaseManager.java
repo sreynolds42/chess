@@ -30,6 +30,16 @@ public class DatabaseManager {
     }
     // making the SQL tables
     static public void createSQLTables() throws DataAccessException{
+        // this one makes username stuff for SQL, usrname, password (hash), and email if there isnt already a table
+        // username is the key so it has to be unique and is the main categorizer
+        String userSQLTable = """
+                CREATE TABLE IF NOT EXISTS user (
+                    username VARCHAR(250) NOT NULL,
+                    password VARCHAR(250) NOT NULL,
+                    email VARCHAR(250) NOT NULL,
+                    primary KEY (username)
+                    )
+                """;
 
     }
 
