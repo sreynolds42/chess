@@ -69,14 +69,14 @@ public class SQLGameDAO implements GameDAO {
         Collection<GameData> games = new ArrayList<>();
 
         try (var connection = DatabaseManager.getConnection()) {
-            try (var preparedStatement = connection.prepareStatement(sql),
-                    var rs = preparedStatement.executeQuery()) {
-                while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String whiteUsername = rs.getString("whiteUsername");
-                    String blackUsername = rs.getString("blackUsername");
-                    String gameName = rs.getString("gameName");
-                    ChessGame chessGame = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+            try (var preparedStatement = connection.prepareStatement(sql);
+                    var result = preparedStatement.executeQuery()){
+                while (result.next()) {
+                    int id = result.getInt("id");
+                    String whiteUsername = result.getString("whiteUsername");
+                    String blackUsername = result.getString("blackUsername");
+                    String gameName = result.getString("gameName");
+                    ChessGame chessGame = new Gson().fromJson(result.getString("game"), ChessGame.class);
                     games.add(new GameData(id, whiteUsername, blackUsername, gameName, chessGame));
                 }
             }
