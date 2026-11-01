@@ -62,7 +62,20 @@ public class DatabaseManager {
                     )
                 """;
 
+        // initializes all three tables
+        try (var conn = getConnection();
+             var stmt = conn.createStatement()) {
+            //table 1
+            stmt.executeUpdate(userSQLTable);
+            //second table
+            stmt.executeUpdate(authSQLTable);
+            //third table
+            stmt.executeUpdate(gameSQLTable);
 
+            //errors
+        } catch (SQLException exception) {
+            throw new DataAccessException("failed to create tables", exception);
+        }
     }
 
     /**
