@@ -24,7 +24,7 @@ public class Server {
             DatabaseManager.createDatabase();
             DatabaseManager.createSQLTables();
         } catch (DataAccessException exception) {
-            throw new RuntimeException("Failed to initialize database", eexception);
+            throw new RuntimeException("Failed to initialize database", exception);
         }
 
 
