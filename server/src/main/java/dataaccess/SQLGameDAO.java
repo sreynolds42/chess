@@ -15,20 +15,40 @@ public class SQLGameDAO implements GameDAO {
 
         String serializedGame = new Gson().toJson(game.game());
 
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(sql)) {
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var preparedStatement = connection.prepareStatement(sql)) {
                 // fills in the game making comamnd
-                ps.setInt(1, game.gameID());
-                ps.setString(2, game.whiteUsername());
-                ps.setString(3, game.blackUsername());
-                ps.setString(4, game.gameName());
-                ps.setString(5, serializedGame);
+                preparedStatement.setInt(1, game.gameID());
+                preparedStatement.setString(2, game.whiteUsername());
+                preparedStatement.setString(3, game.blackUsername());
+                preparedStatement.setString(4, game.gameName());
+                preparedStatement.setString(5, serializedGame);
                 //runs and returns id
-                ps.executeUpdate();
+                preparedStatement.executeUpdate();
                 return game.gameID();
             }
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create game", ex);
+        }
+    }
+
+    @Override
+    public void updateGame(GameData game) throws DataAccessException {
+        // empty query to be filled in
+        String sql = "UPDATE game SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE id = ?";
+        String serializedGame = new Gson().toJson(game.game());
+        // fills it in
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, game.whiteUsername());
+                preparedStatement.setString(2, game.blackUsername());
+                preparedStatement.setString(3, game.gameName());
+                preparedStatement.setString(4, serializedGame);
+                preparedStatement.setInt(5, game.gameID());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to update game", ex);
         }
     }
 }
