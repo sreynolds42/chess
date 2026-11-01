@@ -53,12 +53,25 @@ public class UserService {
         else if(request.username().isBlank() || request.password().isBlank()){
             throw new DataAccessException("Error: bad request");
         }
-        else if(userDAO.getUser(request.username()) != null || request.password() != userDAO.getUser(request.username()).password()){
+
+        UserData user = userDAO.getUser(request.username());
+
+        if (user == null || !user.password().equals(request.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
+
+        String token = UUID.randomUUID().toString();
+        AuthData data = new AuthData(token, request.username());
+        authDAO.createAuth(data);
+
+        return new LoginResult(user.username(), token);
     }
 
-    public void logout(LogoutRequest req) throws DataAccessException {
-
+    public void logout(LogoutRequest request) throws DataAccessException {
+        AuthData data = authDAO.getAuth(request.authToken());
+        if(data == null){
+            throw new DataAccessException("Error: bad request");
+        }
+        authDAO.deleteAuth(request.authToken());
     }
 }
