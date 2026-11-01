@@ -23,8 +23,7 @@ public class SQLGameDAO implements GameDAO {
                 ps.setString(3, game.blackUsername());
                 ps.setString(4, game.gameName());
                 ps.setString(5, serializedGame);
-
-                // Step 3: Run the command
+                //runs and returns id
                 ps.executeUpdate();
                 return game.gameID();
             }
