@@ -74,7 +74,7 @@ public class DatabaseManager {
 
             //errors
         } catch (SQLException exception) {
-            throw new DataAccessException("failed to create tables", exception);
+            throw new DataAccessException("Error: failed to create tables", exception);
         }
     }
 
@@ -97,7 +97,7 @@ public class DatabaseManager {
             conn.setCatalog(databaseName);
             return conn;
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to get connection", ex);
+            throw new DataAccessException("Error: failed to get connection", ex);
         }
     }
 

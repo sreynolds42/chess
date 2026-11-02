@@ -41,7 +41,7 @@ public class SQLAuthDAO implements AuthDAO {
                 }
             }
         } catch (SQLException exception) {
-            throw new DataAccessException("failed to get auth token", exception);
+            throw new DataAccessException("Error: failed to get auth token", exception);
         }
 
         return null;
@@ -59,7 +59,7 @@ public class SQLAuthDAO implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException exception) {
-            throw new DataAccessException("failed to delete auth token", exception);
+            throw new DataAccessException("Error: failed to delete auth token", exception);
         }
     }
 
@@ -72,7 +72,7 @@ public class SQLAuthDAO implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException exception) {
-            throw new DataAccessException("failed to clear auth table", exception);
+            throw new DataAccessException("Error: failed to clear auth table", exception);
         }
     }
 }

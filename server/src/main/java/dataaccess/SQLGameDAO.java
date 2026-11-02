@@ -34,9 +34,9 @@ public class SQLGameDAO implements GameDAO {
                 }
             }
         } catch (SQLException  exception) {
-            throw new DataAccessException("failed to create game",  exception);
+            throw new DataAccessException("Error: failed to create game",  exception);
         }
-        throw new DataAccessException("failed to create game, no ID generated");
+        throw new DataAccessException("Error: failed to create game, no ID generated");
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SQLGameDAO implements GameDAO {
                 }
             }
         } catch (SQLException exception) {
-            throw new DataAccessException("failed to get game", exception);
+            throw new DataAccessException("Error: failed to get game", exception);
         }
         return null;
     }
@@ -81,7 +81,7 @@ public class SQLGameDAO implements GameDAO {
                 }
             }
         } catch (SQLException exception) {
-            throw new DataAccessException("failed to list games", exception);
+            throw new DataAccessException("Error: failed to list games", exception);
         }
         return games;
     }
@@ -102,7 +102,7 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException  exception) {
-            throw new DataAccessException("failed to update game",  exception);
+            throw new DataAccessException("Error: failed to update game",  exception);
         }
     }
 
@@ -117,7 +117,7 @@ public class SQLGameDAO implements GameDAO {
                 ps.executeUpdate();
             }
         } catch (SQLException  exception) {
-            throw new DataAccessException("failed to clear game table",  exception);
+            throw new DataAccessException("Error: failed to clear game table",  exception);
         }
     }
 }
