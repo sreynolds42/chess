@@ -18,6 +18,7 @@ public class SQLGameDAO implements GameDAO {
         String serializedGame = new Gson().toJson(chessGame);
 
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 // fills in the game making comamnd
                 preparedStatement.setString(1, null);
@@ -70,7 +71,7 @@ public class SQLGameDAO implements GameDAO {
 
         try (var connection = DatabaseManager.getConnection()) {
             try (var preparedStatement = connection.prepareStatement(sql);
-                    var result = preparedStatement.executeQuery()){
+                 var result = preparedStatement.executeQuery()){
                 while (result.next()) {
                     int id = result.getInt("id");
                     String whiteUsername = result.getString("whiteUsername");
@@ -93,6 +94,7 @@ public class SQLGameDAO implements GameDAO {
         String serializedGame = new Gson().toJson(game.game());
         // fills it in
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, game.whiteUsername());
                 preparedStatement.setString(2, game.blackUsername());
@@ -112,6 +114,7 @@ public class SQLGameDAO implements GameDAO {
         String sql = "TRUNCATE game";
 
         try (var conn = DatabaseManager.getConnection()) {
+            conn.setAutoCommit(true);
             try (var ps = conn.prepareStatement(sql)) {
                 //  executes the nuke
                 ps.executeUpdate();

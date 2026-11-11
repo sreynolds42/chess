@@ -10,6 +10,7 @@ public class SQLAuthDAO implements AuthDAO {
         //initializes the sql command but as an empty thing to be filled in later
         String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql)) {
                 // fills in the data
                 preparedStatement.setString(1, auth.authToken());
@@ -52,6 +53,7 @@ public class SQLAuthDAO implements AuthDAO {
         // makes the empty delete command
         String sql = "DELETE FROM auth WHERE authToken = ?";
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql)) {
                 // fills in the delete command
                 preparedStatement.setString(1, authToken);
@@ -68,6 +70,7 @@ public class SQLAuthDAO implements AuthDAO {
         // writes clear command (NOT EMPTY TO BE FILLED IN THIS TIME)
         String sql = "TRUNCATE auth";
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.executeUpdate();
             }

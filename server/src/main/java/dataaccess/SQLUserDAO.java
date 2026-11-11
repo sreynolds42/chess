@@ -17,6 +17,7 @@ public class SQLUserDAO implements UserDAO {
         String sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
         // connects to database
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql)) {
                 // completes and runs the sql command from berore
                 preparedStatement.setString(1, user.username());
@@ -58,6 +59,7 @@ public class SQLUserDAO implements UserDAO {
         // nukes table
         String sql = "DELETE FROM user";
         try (var connection = DatabaseManager.getConnection()) {
+            connection.setAutoCommit(true);
             try (var preparedStatement = connection.prepareStatement(sql)) {
                 // runs the nuke
                 preparedStatement.executeUpdate();
