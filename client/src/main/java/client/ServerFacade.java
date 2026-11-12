@@ -2,6 +2,8 @@ package client;
 
 import com.google.gson.Gson;
 import model.*;
+import service.*;
+
 import java.io.*;
 import java.net.*;
 
@@ -16,27 +18,42 @@ public class ServerFacade {
     //registers a user with username, pass and email, throwing an error if smth is wrong
     public AuthData register(String username, String password, String email) throws Exception {
         var path = "/user";
-        var requestData = new UserData(username, password, email);
+        var requestData = new RegisterRequest(username, password, email);
         return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
     //logs in with user and pass
     public AuthData login(String username, String password) throws Exception {
         var path = "/session";
-        var requestData = new UserData(username, password, null);
+        var requestData = new LoginRequest(username, password);
         return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
-    // function for making a game, called by postlogin, takes an array of tokens as input
-    public void createGame(String[] tokens){
-
+    // function for making a game, called by postlogin, takes authToken and gamename to make the game
+    public GameData createGame(String authToken, String gameName) throws Exception{
+        var path = "/game";
+        var requestData = new CreateGameRequest(authToken, gameName);
+        return makeRequest("POST", path, requestData, GameData.class, authToken);
+    }
+    // function for deleting the authToken to log out
+    public AuthData logout(String authToken) throws Exception{
+        var path = "/session";
+        return makeRequest("DELETE", path, null, null, authToken);
     }
 
-    public AuthData logout(){
+    public ListGamesResult listGames(String authToken) throws Exception{
+        var path = "/game";
+        return makeRequest("GET", path, null, ListGamesResult.class, authToken);
+    }
 
+    public void joinGame(String authToken, int ID, String color) throws Exception{
+        var path = "/game";
+        var requestData = new JoinGameRequest(authToken, color, ID);
+        makeRequest("PUT", path, requestData, null, authToken);
     }
 
     //makes http reqs and goes through Jason response
+    // it takes in the method, PRE POST PUT PULL or DELETE, the path,
     private <T> T makeRequest(String method, String path, Object requestData, Class<T> responseClass, String authToken) throws Exception {
         try {
             URL url = new URL(serverUrl + path);

@@ -76,22 +76,41 @@ public class PostloginClient {
 
     // function to actually register instead of just saying it
     public String create(String[] tokens) {
-        if (tokens.length == 2){
-            try{
-
+        if (tokens.length == 2) {
+            try {
+                // create stuff
+            } catch (Exception error) {
+                return "Failed to create game: " + error.getMessage();
             }
         }
         return "Usage: create <NAME>";
     }
 
     public String list(){
+        try {
+            var result = serverFacade.listGames(authToken);
+            if (result.games().isEmpty()){
+                return "No games found.";
+            }
+            String gameList = new String();
+            for(var game : result.games()){
+                // adds a line that goes Game ID: <ID> | Name: <Name>/n for each game in the list.
+                gameList = gameList + "Game ID: " + game.gameID()
+                        + " | Name: " + game.gameName()
+                        + "\n";
+            }
 
+        } catch (Exception error) {
+            return "Failed to get list: " + error.getMessage();
+        }
     }
 
     public String play(String[] tokens) {
         if (tokens.length == 3){
-            try{
-
+            try {
+                // play stuff
+            } catch (Exception error) {
+                return "Failed to join game: " + error.getMessage();
             }
         }
         return "Usage: play <ID> [WHITE|BLACK]";
@@ -99,14 +118,20 @@ public class PostloginClient {
 
     public String observe(String[] tokens) {
         if (tokens.length == 2){
-            try{
-
+            try {
+                // observe stuff
+            } catch (Exception error) {
+                return "Failed to join game: " + error.getMessage();
             }
         }
         return "Usage: observe <ID>";
     }
 
     public String logout() {
-
+        try {
+            //logout stuff
+        } catch (Exception error) {
+            return "Logout failed: " + error.getMessage();
+        }
     }
 }
