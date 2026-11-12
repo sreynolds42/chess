@@ -68,5 +68,10 @@ public class ServerFacade {
         } catch (Exception error) {
             throw new Exception(error.getMessage());
         }
+
+    }
+    // clear for tests
+    public void clear() throws Exception {
+        makeRequest("DELETE", "/db", null, null, null);
     }
 }
