@@ -49,5 +49,21 @@ public class PreloginClient {
             System.out.println("quit - quit program");
             System.out.println("help - list available commands");
         }
+        else if (command.equals("register")){
+
+        }
+        else if (command.equals("login")){
+
+        }
+        else if (command.equals("quit")){
+
+        }
+        else{
+            System.out.println("Input not recognized, valid commands are as follows:");
+            System.out.println("register - create an account");
+            System.out.println("login - login to an existing account");
+            System.out.println("quit - quit program");
+            System.out.println("help - list available commands");
+        }
     }
 }
