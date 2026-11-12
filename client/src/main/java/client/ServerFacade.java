@@ -1,75 +1,72 @@
 package client;
 
-import model.AuthData;
-import model.UserData;
-import org.junit.jupiter.api.*;
-import server.*;
-import static org.junit.jupiter.api.Assertions.*;
+import com.google.gson.Gson;
+import model.*;
+import java.io.*;
+import java.net.*;
 
-public class ServerFacadeTests {
-    private static Server server;
-    static ServerFacade facade;
+public class ServerFacade {
+    private final String serverUrl;
 
-    @BeforeAll
-    public static void init() {
-        server = new Server();
-        var port = server.run(0); // Starts on a random available port
-        System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(port);
+    // Constructor accepts the port so it can connect to the server (including test ports)
+    public ServerFacade(int port) {
+        this.serverUrl = "http://localhost:" + port;
     }
 
-    @AfterAll
-    static void stopServer() {
-        server.stop();
+    // Registers a new user on the server
+    public AuthData register(String username, String password, String email) throws Exception {
+        var path = "/user";
+        var requestData = new UserData(username, password, email);
+        return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
-    @BeforeEach
-    void clearDatabase() {
-        // TODO: Call your server clear API here to ensure a clean state before every test
+    // Logs an existing user into the server
+    public AuthData login(String username, String password) throws Exception {
+        var path = "/session";
+        var requestData = new UserData(username, password, null);
+        return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
-    @Test
-    void registerPositive() {
+    // Helper method to make HTTP requests and parse the JSON response
+    private <T> T makeRequest(String method, String path, Object requestData, Class<T> responseClass, String authToken) throws Exception {
         try {
-            var authData = facade.register("player1", "password", "p1@email.com");
-            assertNotNull(authData.authToken());
-            assertTrue(authData.authToken().length() > 10);
-        } catch (Exception e) {
-            fail("Registration failed unexpectedly: " + e.getMessage());
+            URL url = new URL(serverUrl + path);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod(method);
+            http.setDoOutput(true);
+
+            // Add authorization token if provided
+            if (authToken != null) {
+                http.addRequestProperty("Authorization", authToken);
+            }
+
+            // Send JSON request body if data exists
+            if (requestData != null) {
+                http.addRequestProperty("Content-Type", "application/json");
+                String reqData = new Gson().toJson(requestData);
+                try (OutputStream reqBody = http.getOutputStream()) {
+                    reqBody.write(reqData.getBytes());
+                }
+            }
+
+            http.connect();
+
+            // Check for bad response codes
+            int status = http.getResponseCode();
+            if (status < 200 || status > 299) {
+                throw new Exception("Server error: " + status);
+            }
+
+            // Read response body into object
+            try (InputStream respBody = http.getInputStream()) {
+                InputStreamReader reader = new InputStreamReader(respBody);
+                if (responseClass != null) {
+                    return new Gson().fromJson(reader, responseClass);
+                }
+            }
+            return null;
+        } catch (Exception ex) {
+            throw new Exception(ex.getMessage());
         }
     }
-
-    @Test
-    void registerNegative() {
-        // Trying to register the same username twice should throw an exception
-        try {
-            facade.register("player2", "password", "p2@email.com");
-            facade.register("player2", "password", "p2@email.com"); // Duplicate
-            fail("Expected an exception for duplicate registration");
-        } catch (Exception e) {
-            assertTrue(true); // Successfully caught the expected error
-        }
-    }
-
-    @Test
-    void loginPositive() {
-        try {
-            facade.register("player3", "password", "p3@email.com");
-            var authData = facade.login("player3", "password");
-            assertNotNull(authData.authToken());
-        } catch (Exception e) {
-            fail("Login failed unexpectedly: " + e.getMessage());
-        }
-    }
-
-    @Test
-    void loginNegative() {
-        // Trying to log in with a bad password should throw an exception
-        try {
-            facade.login("nonexistentUser", "wrongPassword");
-            fail("Expected an exception for invalid login");
-        } catch (Exception e) {
-            assertTrue(true); // Successfully caught the expected error
-        }
-    }
-}}
+}
