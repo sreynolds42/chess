@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class PreloginClient {
     private final ServerFacade serverFacade;
+    private String authToken = null;
 
     public PreloginClient(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
@@ -62,7 +63,7 @@ public class PreloginClient {
                 throw new RuntimeException("Registration unsuccessful");
             }
 
-            // implement register
+            //implement register
         }
         else if (command.equals("login")){
             // makes sure arg number is correct
@@ -88,7 +89,40 @@ public class PreloginClient {
             throw new RuntimeException("Unknown command, valid commands are as follows:\n" + help);
         }
     }
+    // function to actually tegister instead of just saying it
+    public String register(String[] tokens) throws Exception{
+        if (tokens.length != 4){
+            try{
+                // tries to register with the user pass and email
+                var authData = serverFacade.register(tokens[0], tokens[1], tokens[2]);
+                // makes the token the authData's token and welcomes user
+                this.authToken = authData.authToken();
+                String username = authData.username();
+                return "Registered and logged in as " + username;
+            } catch (Exception error){
+                return "Registration failed: " + error.getMessage();
+            }
+        }
+        return ("Usage: register <USERNAME> <PASSWORD> <EMAIL>");
+    }
+    public String login(String[] tokens) throws Exception{
+        if (tokens.length != 3){
+            try{
+                // tries to log in with the username and password
+                var authData = serverFacade.login(tokens[0], tokens[1]);
+                // makes the token the authData's token and welcomes user
+                this.authToken = authData.authToken();
+                String username = authData.username();
+                return "Logged in as " + username;
+            } catch (Exception error){
+                return "Login failed: " + error.getMessage();
+            }
+        }
+        return ("Usage: login <USERNAME> <PASSWORD>");
+    }
+
 }
+
 
 
 //System.out.println("create <NAME> - create game with name <NAME>");
