@@ -99,6 +99,7 @@ public class PostloginClient {
                         + " | Name: " + game.gameName()
                         + "\n";
             }
+            return gameList;
 
         } catch (Exception error) {
             return "Failed to get list: " + error.getMessage();
@@ -129,7 +130,8 @@ public class PostloginClient {
 
     public String logout() {
         try {
-            //logout stuff
+            serverFacade.logout(authToken);
+            return "Logout successful";
         } catch (Exception error) {
             return "Logout failed: " + error.getMessage();
         }
