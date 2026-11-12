@@ -28,6 +28,19 @@ public class ServerFacade {
                 os.write(input, 0, input.length);
             }
         }
+        http.connect();
+
+        int status = http.getResponseCode();
+        if (status < 200 || status > 299) {
+            throw new Exception("Server returned code: " + status);
+        }
+
+        try (InputStreamReader reader = new InputStreamReader(http.getInputStream())) {
+            if (classResp != null) {
+                return new Gson().fromJson(reader, classResp);
+            }
+            return null;
+        }
     }
 
 
