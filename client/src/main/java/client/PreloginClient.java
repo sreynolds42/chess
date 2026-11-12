@@ -2,8 +2,6 @@ package client;
 
 import java.util.Scanner;
 
-import static com.sun.org.apache.xpath.internal.XPathAPI.eval;
-
 public class PreloginClient {
     private final ServerFacade serverFacade;
 
@@ -25,7 +23,7 @@ public class PreloginClient {
 
             //in order to avoid errors being thrown if the input is garblediegook
             try {
-                String command = eval(userInput)
+                String command = evaluate(userInput);
             }
             catch (Exception error){
                 System.out.println("Input not recognized, valid commands are as follows:");
@@ -40,5 +38,16 @@ public class PreloginClient {
         }
 
 
+    }
+    // reads the command input and outputs accordingly as well as cleaning up the command
+    public String evaluate(String input){
+        String[] tokens = input.split("\\s+");
+        String command = tokens.length > 0 ? tokens[0].toLowerCase() : "";
+        if (command.equals("help")) {
+            System.out.println("register - create an account");
+            System.out.println("login - login to an existing account");
+            System.out.println("quit - quit program");
+            System.out.println("help - list available commands");
+        }
     }
 }
