@@ -8,26 +8,26 @@ import java.net.*;
 public class ServerFacade {
     private final String serverUrl;
 
-    // Constructor accepts the port so it can connect to the server (including test ports)
+    //constructs with port
     public ServerFacade(int port) {
         this.serverUrl = "http://localhost:" + port;
     }
 
-    // Registers a new user on the server
+    //registers a user with username, pass and email, throwing an error if smth is wrong
     public AuthData register(String username, String password, String email) throws Exception {
         var path = "/user";
         var requestData = new UserData(username, password, email);
         return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
-    // Logs an existing user into the server
+    //logs in with user and pass
     public AuthData login(String username, String password) throws Exception {
         var path = "/session";
         var requestData = new UserData(username, password, null);
         return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
-    // Helper method to make HTTP requests and parse the JSON response
+    //makes http reqs and goes through Jason response
     private <T> T makeRequest(String method, String path, Object requestData, Class<T> responseClass, String authToken) throws Exception {
         try {
             URL url = new URL(serverUrl + path);
@@ -35,12 +35,12 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            // Add authorization token if provided
+            //if theres an auth token, it adds it, if not it moves on
             if (authToken != null) {
                 http.addRequestProperty("Authorization", authToken);
             }
 
-            // Send JSON request body if data exists
+            //sends a request if there is data
             if (requestData != null) {
                 http.addRequestProperty("Content-Type", "application/json");
                 String reqData = new Gson().toJson(requestData);
@@ -51,13 +51,13 @@ public class ServerFacade {
 
             http.connect();
 
-            // Check for bad response codes
+            //Looks for messed up response codes and throws an error if so
             int status = http.getResponseCode();
             if (status < 200 || status > 299) {
                 throw new Exception("Server error: " + status);
             }
 
-            // Read response body into object
+            //plugs response into obj
             try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
@@ -65,8 +65,8 @@ public class ServerFacade {
                 }
             }
             return null;
-        } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
+        } catch (Exception error) {
+            throw new Exception(error.getMessage());
         }
     }
 }
