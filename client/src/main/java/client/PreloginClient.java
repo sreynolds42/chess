@@ -24,19 +24,19 @@ public class PreloginClient {
 
             //in order to avoid errors being thrown if the input is garblediegook
             try {
-                String command = evaluate(userInput);
+                String result = evaluate(userInput);
+                if (!result.equals("quit") && !result.equals("help")) {
+                    System.out.println(result);
+                }
             }
             catch (Exception error){
-                System.out.println("Input not recognized, valid commands are as follows:");
-                evaluate("help");
-
+                System.out.println(error.getMessage());
             }
         }
-
-
     }
+
     // reads the command input and outputs accordingly as well as cleaning up the command
-    public String evaluate(String input){
+    public String evaluate(String input) throws Exception {
         String[] tokens = input.split("\\s+");
         String command = tokens.length > 0 ? tokens[0].toLowerCase() : "";
         String help = "register - create an account " +
@@ -48,53 +48,25 @@ public class PreloginClient {
             return "help";
         }
         else if (command.equals("register")){
-            // makes sure arg number is correct
-            if (tokens.length != 4){
-                throw new RuntimeException("Usage: register <USERNAME> <PASSWORD> <EMAIL>");
-            }
-            try {
-                // tries putting in the vals as tokens, and if it works registers
-                String username = tokens[1];
-                String password = tokens[2];
-                String email = tokens[3];
-                System.out.println("Registration successful");
-                return "register";
-            } catch (Exception error){
-                throw new RuntimeException("Registration unsuccessful");
-            }
-
-            //implement register
+            return register(tokens);
         }
         else if (command.equals("login")){
-            // makes sure arg number is correct
-            if (tokens.length != 3){
-                throw new RuntimeException("Usage: login <USERNAME> <PASSWORD>");
-            }
-            try {
-                // tries putting in the vals as tokens, and if it works registers
-                String username = tokens[1];
-                String password = tokens[2];
-                System.out.println("Login successful");
-                return "login";
-            } catch (Exception error){
-                throw new RuntimeException("Login unsuccessful");
-            }
-            // implement login
+            return login(tokens);
         }
         else if (command.equals("quit")){
             return "quit";
-            // implement quit
         }
         else{
             throw new RuntimeException("Unknown command, valid commands are as follows:\n" + help);
         }
     }
-    // function to actually tegister instead of just saying it
-    public String register(String[] tokens) throws Exception{
-        if (tokens.length != 4){
+
+    // function to actually register instead of just saying it
+    public String register(String[] tokens) {
+        if (tokens.length == 4){
             try{
-                // tries to register with the user pass and email
-                var authData = serverFacade.register(tokens[0], tokens[1], tokens[2]);
+                // tries to register with the user pass and email (index 0 is "register")
+                var authData = serverFacade.register(tokens[1], tokens[2], tokens[3]);
                 // makes the token the authData's token and welcomes user
                 this.authToken = authData.authToken();
                 String username = authData.username();
@@ -103,13 +75,14 @@ public class PreloginClient {
                 return "Registration failed: " + error.getMessage();
             }
         }
-        return ("Usage: register <USERNAME> <PASSWORD> <EMAIL>");
+        return "Usage: register <USERNAME> <PASSWORD> <EMAIL>";
     }
-    public String login(String[] tokens) throws Exception{
-        if (tokens.length != 3){
+
+    public String login(String[] tokens) {
+        if (tokens.length == 3){
             try{
-                // tries to log in with the username and password
-                var authData = serverFacade.login(tokens[0], tokens[1]);
+                // tries to log in with the username and password (index 0 is "login")
+                var authData = serverFacade.login(tokens[1], tokens[2]);
                 // makes the token the authData's token and welcomes user
                 this.authToken = authData.authToken();
                 String username = authData.username();
@@ -118,12 +91,9 @@ public class PreloginClient {
                 return "Login failed: " + error.getMessage();
             }
         }
-        return ("Usage: login <USERNAME> <PASSWORD>");
+        return "Usage: login <USERNAME> <PASSWORD>";
     }
-
 }
-
-
 
 //System.out.println("create <NAME> - create game with name <NAME>");
 //                System.out.println("list - list all games");
