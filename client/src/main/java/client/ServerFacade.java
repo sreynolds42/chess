@@ -16,6 +16,11 @@ public class ServerFacade {
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
         http.setRequestMethod(method);
         http.setDoOutput(true);
+        // if the token isnt null and isnt empty then it gets the authorization
+        if (authToken != null && !authToken.isEmpty()) {
+            http.setRequestProperty("authorization", authToken);
+        }
+
     }
 
 
