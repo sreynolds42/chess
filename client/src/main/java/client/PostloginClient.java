@@ -2,11 +2,11 @@ package client;
 
 import java.util.Scanner;
 
-public class PreloginClient {
+public class PostloginClient {
     private final ServerFacade serverFacade;
     private String authToken = null;
 
-    public PreloginClient(ServerFacade serverFacade) {
+    public PostloginClient(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
     }
 
@@ -16,10 +16,10 @@ public class PreloginClient {
         Scanner scanner = new Scanner(System.in);
         String userInput = "";
 
-        // main internal loop, stops when quit is put in by user
-        while(!userInput.equals("quit")){
-            //because theyre not logged in (PRElogin) it says logged out b4 everything
-            System.out.print("[LOGGED OUT] >>> ");
+        // main internal loop, stops when quit OR logout is put in by user
+        while(!userInput.equals("quit") && !userInput.equals("logout")){
+            //because they ARE logged in (POSTlogin) it says logged in b4 everything
+            System.out.print("[LOGGED IN] >>> ");
             userInput = scanner.nextLine().trim();
 
             //in order to avoid errors being thrown if the input is garblediegook
@@ -39,19 +39,32 @@ public class PreloginClient {
     public String evaluate(String input) throws Exception {
         String[] tokens = input.split("\\s+");
         String command = tokens.length > 0 ? tokens[0].toLowerCase() : "";
-        String help = "register - create an account " +
-                "\nlogin - login to an existing account" +
+        String help = "create <NAME> - create game with name <NAME>" +
+                "\nlist - list all games" +
+                "\nplay <ID> [WHITE|BLACK] - join a game" +
+                "\nobserve <ID> - observe game with ID" +
+                "\nlogout - logout of account" +
                 "\nquit - quit program" +
                 "\nhelp - list available commands";
+
         if (command.equals("help")) {
             System.out.println(help);
             return "help";
         }
-        else if (command.equals("register")){
-            return register(tokens);
+        else if (command.equals("create")){
+            return create(tokens);
         }
-        else if (command.equals("login")){
-            return login(tokens);
+        else if (command.equals("list")){
+            return list();
+        }
+        else if (command.equals("play")){
+            return play(tokens);
+        }
+        else if (command.equals("observe")){
+            return observe(tokens);
+        }
+        else if (command.equals("logout")){
+            return logout();
         }
         else if (command.equals("quit")){
             return "quit";
@@ -62,35 +75,38 @@ public class PreloginClient {
     }
 
     // function to actually register instead of just saying it
-    public String register(String[] tokens) {
-        if (tokens.length == 4){
+    public String create(String[] tokens) {
+        if (tokens.length == 2){
             try{
-                // tries to register with the user pass and email (index 0 is "register")
-                var authData = serverFacade.register(tokens[1], tokens[2], tokens[3]);
-                // makes the token the authData's token and welcomes user
-                this.authToken = authData.authToken();
-                String username = authData.username();
-                return "Registered and logged in as " + username;
-            } catch (Exception error){
-                return "Registration failed: " + error.getMessage();
+
             }
         }
-        return "Usage: register <USERNAME> <PASSWORD> <EMAIL>";
+        return "Usage: create <NAME>";
     }
 
-    public String login(String[] tokens) {
+    public String list(){
+
+    }
+
+    public String play(String[] tokens) {
         if (tokens.length == 3){
             try{
-                // tries to log in with the username and password (index 0 is "login")
-                var authData = serverFacade.login(tokens[1], tokens[2]);
-                // makes the token the authData's token and welcomes user
-                this.authToken = authData.authToken();
-                String username = authData.username();
-                return "Logged in as " + username;
-            } catch (Exception error){
-                return "Login failed: " + error.getMessage();
+
             }
         }
-        return "Usage: login <USERNAME> <PASSWORD>";
+        return "Usage: play <ID> [WHITE|BLACK]";
+    }
+
+    public String observe(String[] tokens) {
+        if (tokens.length == 2){
+            try{
+
+            }
+        }
+        return "Usage: observe <ID>";
+    }
+
+    public String logout() {
+
     }
 }
