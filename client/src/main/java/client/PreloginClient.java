@@ -27,12 +27,7 @@ public class PreloginClient {
             }
             catch (Exception error){
                 System.out.println("Input not recognized, valid commands are as follows:");
-                System.out.println("create <NAME> - create game with name <NAME>");
-                System.out.println("list - list all games");
-                System.out.println("observe <ID> - observe game with ID");
-                System.out.println("logout - logout of account");
-                System.out.println("quit - quit program");
-                System.out.println("help - list available commands");
+                evaluate("help");
 
             }
         }
@@ -43,27 +38,36 @@ public class PreloginClient {
     public String evaluate(String input){
         String[] tokens = input.split("\\s+");
         String command = tokens.length > 0 ? tokens[0].toLowerCase() : "";
+        String help = "register - create an account " +
+                "\nlogin - login to an existing account" +
+                "\nquit - quit program" +
+                "\nhelp - list available commands";
         if (command.equals("help")) {
-            System.out.println("register - create an account");
-            System.out.println("login - login to an existing account");
-            System.out.println("quit - quit program");
-            System.out.println("help - list available commands");
+            System.out.println(help);
+            return "help";
         }
         else if (command.equals("register")){
-
+            return "register";
+            // implement register
         }
         else if (command.equals("login")){
-
+            return "login";
+            // implement login
         }
         else if (command.equals("quit")){
-
+            return "quit";
+            // implement quit
         }
         else{
-            System.out.println("Input not recognized, valid commands are as follows:");
-            System.out.println("register - create an account");
-            System.out.println("login - login to an existing account");
-            System.out.println("quit - quit program");
-            System.out.println("help - list available commands");
+            throw new RuntimeException("Unknown command, valid commands are as follows:\n" + help);
         }
     }
 }
+
+
+//System.out.println("create <NAME> - create game with name <NAME>");
+//                System.out.println("list - list all games");
+//                System.out.println("observe <ID> - observe game with ID");
+//                System.out.println("logout - logout of account");
+//                System.out.println("quit - quit program");
+//                System.out.println("help - list available commands");
