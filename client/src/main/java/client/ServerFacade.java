@@ -27,6 +27,15 @@ public class ServerFacade {
         return makeRequest("POST", path, requestData, AuthData.class, null);
     }
 
+    // function for making a game, called by postlogin, takes an array of tokens as input
+    public void createGame(String[] tokens){
+
+    }
+
+    public AuthData logout(){
+
+    }
+
     //makes http reqs and goes through Jason response
     private <T> T makeRequest(String method, String path, Object requestData, Class<T> responseClass, String authToken) throws Exception {
         try {
