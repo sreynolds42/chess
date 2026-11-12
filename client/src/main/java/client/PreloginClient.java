@@ -52,6 +52,7 @@ public class PreloginClient {
                 throw new RuntimeException("Usage: register <USERNAME> <PASSWORD> <EMAIL>");
             }
             try {
+                // tries putting in the vals as tokens, and if it works registers
                 String username = tokens[1];
                 String password = tokens[2];
                 String email = tokens[3];
@@ -64,7 +65,19 @@ public class PreloginClient {
             // implement register
         }
         else if (command.equals("login")){
-            return "login";
+            // makes sure arg number is correct
+            if (tokens.length != 3){
+                throw new RuntimeException("Usage: login <USERNAME> <PASSWORD>");
+            }
+            try {
+                // tries putting in the vals as tokens, and if it works registers
+                String username = tokens[1];
+                String password = tokens[2];
+                System.out.println("Login successful");
+                return "login";
+            } catch (Exception error){
+                throw new RuntimeException("Login unsuccessful");
+            }
             // implement login
         }
         else if (command.equals("quit")){

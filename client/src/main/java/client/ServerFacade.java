@@ -1,47 +1,75 @@
 package client;
 
-import com.google.gson.Gson;
-import java.io.*;
-import java.net.*;
+import model.AuthData;
+import model.UserData;
+import org.junit.jupiter.api.*;
+import server.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ServerFacade {
-    private final String serverURL;
+public class ServerFacadeTests {
+    private static Server server;
+    static ServerFacade facade;
 
-    public ServerFacade(int port){
-        this.serverURL = "http://localhost:" + port;
+    @BeforeAll
+    public static void init() {
+        server = new Server();
+        var port = server.run(0); // Starts on a random available port
+        System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade(port);
     }
 
-    private <T> T makeRequest(String method, String path, Object dataReq, Class<T> classResp, String authToken) throws Exception{
-        URL url = new URL(serverURL + path);
-        HttpURLConnection http = (HttpURLConnection) url.openConnection();
-        http.setRequestMethod(method);
-        http.setDoOutput(true);
-        // if the token isnt null and isnt empty then it gets the authorization
-        if (authToken != null && !authToken.isEmpty()) {
-            http.setRequestProperty("authorization", authToken);
-        }
-        if (dataReq != null) {
-            http.setRequestProperty("Content-Type", "application/json");
-            String body = new Gson().toJson(dataReq);
-            try (OutputStream os = http.getOutputStream()) {
-                byte[] input = body.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-        }
-        http.connect();
+    @AfterAll
+    static void stopServer() {
+        server.stop();
+    }
 
-        int status = http.getResponseCode();
-        if (status < 200 || status > 299) {
-            throw new Exception("Server returned code: " + status);
-        }
+    @BeforeEach
+    void clearDatabase() {
+        // TODO: Call your server clear API here to ensure a clean state before every test
+    }
 
-        try (InputStreamReader reader = new InputStreamReader(http.getInputStream())) {
-            if (classResp != null) {
-                return new Gson().fromJson(reader, classResp);
-            }
-            return null;
+    @Test
+    void registerPositive() {
+        try {
+            var authData = facade.register("player1", "password", "p1@email.com");
+            assertNotNull(authData.authToken());
+            assertTrue(authData.authToken().length() > 10);
+        } catch (Exception e) {
+            fail("Registration failed unexpectedly: " + e.getMessage());
         }
     }
 
+    @Test
+    void registerNegative() {
+        // Trying to register the same username twice should throw an exception
+        try {
+            facade.register("player2", "password", "p2@email.com");
+            facade.register("player2", "password", "p2@email.com"); // Duplicate
+            fail("Expected an exception for duplicate registration");
+        } catch (Exception e) {
+            assertTrue(true); // Successfully caught the expected error
+        }
+    }
 
-}
+    @Test
+    void loginPositive() {
+        try {
+            facade.register("player3", "password", "p3@email.com");
+            var authData = facade.login("player3", "password");
+            assertNotNull(authData.authToken());
+        } catch (Exception e) {
+            fail("Login failed unexpectedly: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void loginNegative() {
+        // Trying to log in with a bad password should throw an exception
+        try {
+            facade.login("nonexistentUser", "wrongPassword");
+            fail("Expected an exception for invalid login");
+        } catch (Exception e) {
+            assertTrue(true); // Successfully caught the expected error
+        }
+    }
+}}
