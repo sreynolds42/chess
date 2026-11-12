@@ -20,7 +20,14 @@ public class ServerFacade {
         if (authToken != null && !authToken.isEmpty()) {
             http.setRequestProperty("authorization", authToken);
         }
-
+        if (dataReq != null) {
+            http.setRequestProperty("Content-Type", "application/json");
+            String body = new Gson().toJson(dataReq);
+            try (OutputStream os = http.getOutputStream()) {
+                byte[] input = body.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+        }
     }
 
 
