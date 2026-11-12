@@ -1,13 +1,15 @@
 package client;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class PostloginClient {
     private final ServerFacade serverFacade;
-    private String authToken = null;
+    private String authToken;
 
-    public PostloginClient(ServerFacade serverFacade) {
+    public PostloginClient(ServerFacade serverFacade, String authToken) {
         this.serverFacade = serverFacade;
+        this.authToken = authToken;
     }
 
     // main running loop for the game
@@ -78,7 +80,9 @@ public class PostloginClient {
     public String create(String[] tokens) {
         if (tokens.length == 2) {
             try {
-                // create stuff
+                // makes a game with tokens[1] (the name)
+                serverFacade.createGame(authToken, tokens[1]);
+                return ("Successfully created game " + tokens[1]);
             } catch (Exception error) {
                 return "Failed to create game: " + error.getMessage();
             }
@@ -109,7 +113,10 @@ public class PostloginClient {
     public String play(String[] tokens) {
         if (tokens.length == 3){
             try {
-                // play stuff
+                int ID = Integer.parseInt(tokens[1]);
+                String color = tokens[2].toUpperCase();
+                serverFacade.joinGame(authToken, ID, color);
+                return ("Successfully joined game " + ID + " as " + color);
             } catch (Exception error) {
                 return "Failed to join game: " + error.getMessage();
             }
@@ -121,8 +128,11 @@ public class PostloginClient {
         if (tokens.length == 2){
             try {
                 // observe stuff
+                int ID = Integer.parseInt(tokens[1]);
+                serverFacade.joinGame(authToken, ID, null);
+                return ("Successfully joined game " + ID + " as observer");
             } catch (Exception error) {
-                return "Failed to join game: " + error.getMessage();
+                return "Failed to join game as observer: " + error.getMessage();
             }
         }
         return "Usage: observe <ID>";
