@@ -47,7 +47,20 @@ public class PreloginClient {
             return "help";
         }
         else if (command.equals("register")){
-            return "register";
+            // makes sure arg number is correct
+            if (tokens.length != 4){
+                throw new RuntimeException("Usage: register <USERNAME> <PASSWORD> <EMAIL>");
+            }
+            try {
+                String username = tokens[1];
+                String password = tokens[2];
+                String email = tokens[3];
+                System.out.println("Registration successful");
+                return "register";
+            } catch (Exception error){
+                throw new RuntimeException("Registration unsuccessful");
+            }
+
             // implement register
         }
         else if (command.equals("login")){
