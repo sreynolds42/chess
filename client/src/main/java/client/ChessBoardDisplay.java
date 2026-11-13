@@ -22,9 +22,14 @@ public class ChessBoard {
 
                 String squareColor;
                 if(isBlack){
-                    squareColor = blackSquare
+                    squareColor = blackSquare;
                 }
-                System.out.print("\u2003 ");
+                else{
+                    squareColor = whiteSquare;
+                }
+                isBlack = !isBlack;
+                ChessPosition pos = new ChessPosition(r, c);
+                ChessPiece piece = board.getPiece(pos);
             }
             System.out.println(r);
         }
