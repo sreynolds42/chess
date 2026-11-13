@@ -11,13 +11,23 @@ import model.*;
 public class Server {
 
     private final Javalin javalin;
-    private final UserDAO userDAO = new MemoryUserDAO();
-    private final AuthDAO authDAO = new MemoryAuthDAO();
-    private final GameDAO gameDAO = new MemoryGameDAO();
+    private final UserDAO userDAO = new SQLUserDAO();
+    private final AuthDAO authDAO = new SQLAuthDAO();
+    private final GameDAO gameDAO = new SQLGameDAO();
     private final UserService userService = new UserService(userDAO, authDAO, gameDAO);
     private final GameService gameService = new GameService(authDAO, gameDAO);
 
     public Server() {
+
+        // phase 4 SQL initialization
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.createSQLTables();
+        } catch (DataAccessException exception) {
+            throw new RuntimeException("Failed to initialize database", exception);
+        }
+
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         javalin.delete("/db", this::clear);
@@ -116,6 +126,10 @@ public class Server {
             ctx.status(401);
         } else if (message.toLowerCase().contains("already taken")) {
             ctx.status(403);
+        } else if (message.toLowerCase().contains("bad request")) {
+            ctx.status(400);
+        } else if (e instanceof DataAccessException) {
+            ctx.status(500);
         } else {
             ctx.status(400);
         }
