@@ -1,7 +1,7 @@
 package client;
 
 import model.GameData;
-import service.*;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
