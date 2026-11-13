@@ -11,14 +11,20 @@ public class ChessBoardDisplay {
     private static final String blackText = "\u001B[30m";
     // \u2003 is emspace
 
-    public static void printDefaultBoard(ChessBoard board, String color){
+    public static void printDefaultBoard(ChessBoard board, String playerColor){
+        //perspective determiner
+        boolean whitePov = true;
+        if (playerColor != null && playerColor.toLowerCase().equals("black")){
+            whitePov = false;
+        }
+
         System.out.println("    a  b  c  d  e  f  g  h  ");
         // rows
 
         for (int r = 8; r > 0; r--){
             System.out.print(r + " ");
             // this makes the black
-            boolean isBlack = r % 2 == 0;;
+            boolean isBlack = r % 2 == 0;
             // cols
             for (int c = 1; c <= 8; c++){
 
@@ -34,7 +40,7 @@ public class ChessBoardDisplay {
                 ChessPiece piece = board.getPiece(new ChessPosition(r, c));
                 System.out.print(squareColor + "\u2003" + pieceChar(piece) + "\u2003" + reset);
             }
-            System.out.println(r);
+            System.out.println(" " + r);
         }
 
         System.out.println("    a  b  c  d  e  f  g  h  ");
