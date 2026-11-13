@@ -1,11 +1,17 @@
 package client;
 
+import model.GameData;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class PostloginClient {
     private final ServerFacade serverFacade;
     private String authToken;
+    // tjis is so that the IDs can count up from 1, 2, 3 etc.
+    private List<GameData> numberedGames = new ArrayList<>();
 
     public PostloginClient(ServerFacade serverFacade, String authToken) {
         this.serverFacade = serverFacade;
@@ -96,12 +102,15 @@ public class PostloginClient {
             if (result.games().isEmpty()){
                 return "No games found.";
             }
+            numberedGames = new ArrayList<>(result.games());
             String gameList = new String();
-            for(var game : result.games()){
-                // adds a line that goes Game ID: <ID> | Name: <Name>/n for each game in the list.
-                gameList = gameList + "Game ID: " + game.gameID()
+            int gameNumber = 1;
+            for(var game : numberedGames){
+                // adds a line that goes Game number: <Game number> | Name: <Name>/n for each game in the list.
+                gameList = gameList + "Game #: " + gameNumber
                         + " | Name: " + game.gameName()
                         + "\n";
+                gameNumber++;
             }
             return gameList;
 
@@ -113,10 +122,10 @@ public class PostloginClient {
     public String play(String[] tokens) {
         if (tokens.length == 3){
             try {
-                int ID = Integer.parseInt(tokens[1]);
+                int ID = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
                 String color = tokens[2].toUpperCase();
                 serverFacade.joinGame(authToken, ID, color);
-                return ("Successfully joined game " + ID + " as " + color);
+                return ("Successfully joined game " + tokens[1] + " as " + color);
             } catch (Exception error) {
                 return "Failed to join game: " + error.getMessage();
             }
@@ -127,10 +136,9 @@ public class PostloginClient {
     public String observe(String[] tokens) {
         if (tokens.length == 2){
             try {
-                // observe stuff
-                int ID = Integer.parseInt(tokens[1]);
+                int ID = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
                 serverFacade.joinGame(authToken, ID, null);
-                return ("Successfully joined game " + ID + " as observer");
+                return ("Successfully joined game " + tokens[1] + " as observer");
             } catch (Exception error) {
                 return "Failed to join game as observer: " + error.getMessage();
             }
