@@ -2,8 +2,6 @@ package client;
 
 import com.google.gson.Gson;
 import model.*;
-import server.*;
-import service.*;
 
 import java.io.*;
 import java.net.*;
