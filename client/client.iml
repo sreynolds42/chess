@@ -7,10 +7,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="library" exported="" name="mindrot.jbcrypt" level="project" />
+    <orderEntry type="library" exported="" name="mysql.connector.j" level="project" />
+    <orderEntry type="library" exported="" name="slf4j.simple" level="project" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="shared" />
-    <orderEntry type="module" module-name="server" />
-    <orderEntry type="library" name="google.code.gson" level="project" />
-    <orderEntry type="library" name="junit.jupiter" level="project" />
+    <orderEntry type="module" module-name="shared" exported="" />
+    <orderEntry type="module" module-name="server" exported="" />
+    <orderEntry type="library" exported="" name="google.code.gson" level="project" />
+    <orderEntry type="library" exported="" name="junit.jupiter" level="project" />
   </component>
 </module>
