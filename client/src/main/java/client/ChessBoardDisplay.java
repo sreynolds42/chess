@@ -18,15 +18,26 @@ public class ChessBoardDisplay {
             whitePov = false;
         }
 
-        System.out.println("    a  b  c  d  e  f  g  h  ");
-        // rows
+        // flips coords based on pov
+        int scaler;
+        if (whitePov){
+            scaler = 1;
+            System.out.println("    a  b  c  d  e  f  g  h  ");
+        }
+        else{
+            scaler = -1;
+            System.out.println("    h  g  f  e  d  c  b  a  ");
+        }
 
-        for (int r = 8; r > 0; r--){
+        // rows
+        // if scaler is 1, r = 8, stops at 0
+        // if scaler is -1, r = 1, ends at 9
+        for (int r = (9 + 7 * scaler) / 2; r != (9 - 9 * scaler) / 2; r -= scaler){
             System.out.print(r + " ");
             // this makes the black
             boolean isBlack = r % 2 == 0;
-            // cols
-            for (int c = 1; c <= 8; c++){
+            // cols with the same logic as rows
+            for (int c = (9 - 7 * scaler) / 2; c != (9 + 9 * scaler) / 2; c += scaler){
 
                 String squareColor;
                 if(isBlack){
@@ -43,7 +54,12 @@ public class ChessBoardDisplay {
             System.out.println(" " + r);
         }
 
-        System.out.println("    a  b  c  d  e  f  g  h  ");
+        if (whitePov){
+            System.out.println("    a  b  c  d  e  f  g  h  ");
+        }
+        else{
+            System.out.println("    h  g  f  e  d  c  b  a  ");
+        }
 
     }
     // turns pieces into unicode chars
