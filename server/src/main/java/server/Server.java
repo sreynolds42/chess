@@ -6,7 +6,6 @@ import java.util.Map;
 import io.javalin.*;
 import service.*;
 import dataaccess.*;
-import model.*;
 
 public class Server {
 
