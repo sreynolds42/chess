@@ -4,7 +4,6 @@ import model.GameData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class PostloginClient {
@@ -30,10 +29,10 @@ public class PostloginClient {
             System.out.print("[LOGGED IN] >>> ");
             userInput = scanner.nextLine().trim();
 
-            //in order to avoid errors being thrown if the input is garblediegook
+            //in order to avoid errors being thrown if the input is garblediegook, and to make sure it doesnt print empty lines
             try {
                 String result = evaluate(userInput);
-                if (!result.equals("quit") && !result.equals("help")) {
+                if (!result.equals("quit") && !result.equals("help") && !result.isEmpty()) {
                     System.out.println(result);
                 }
             }
@@ -41,6 +40,7 @@ public class PostloginClient {
                 System.out.println(error.getMessage());
             }
         }
+
     }
 
     // reads the command input and outputs accordingly as well as cleaning up the command
@@ -56,6 +56,9 @@ public class PostloginClient {
                 "\nhelp - list available commands";
 
         if (command.equals("help")) {
+            if (tokens.length > 1) {
+                return "Usage: help";
+            }
             System.out.println(help);
             return "help";
         }
@@ -72,9 +75,17 @@ public class PostloginClient {
             return observe(tokens);
         }
         else if (command.equals("logout")){
+            if (tokens.length > 1) {
+                return "Usage: logout";
+            }
             return logout();
         }
         else if (command.equals("quit")){
+            if (tokens.length > 1) {
+                return "Usage: quit";
+            }
+            logout();
+            System.exit(0);
             return "quit";
         }
         else{
@@ -107,8 +118,18 @@ public class PostloginClient {
             int gameNumber = 1;
             for(var game : numberedGames){
                 // adds a line that goes Game number: <Game number> | Name: <Name>/n for each game in the list.
+                String whitePlayer = "Empty";
+                String blackPlayer = "Empty";
+                if(game.whiteUsername() != null){
+                    whitePlayer = game.whiteUsername();
+                }
+                if(game.blackUsername() != null){
+                    blackPlayer = game.blackUsername();
+                }
                 gameList = gameList + "Game #: " + gameNumber
                         + " | Name: " + game.gameName()
+                        + " | White player: " + whitePlayer
+                        + " | Black player: " + blackPlayer
                         + "\n";
                 gameNumber++;
             }
@@ -125,8 +146,21 @@ public class PostloginClient {
                 int ID = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
                 String color = tokens[2].toUpperCase();
                 serverFacade.joinGame(authToken, ID, color);
+
+                //board drawing -- to be replaced
+                chess.ChessBoard board = new chess.ChessBoard();
+                board.resetBoard();
+                ChessBoardDisplay.printDefaultBoard(board, color);
+
                 return ("Successfully joined game " + tokens[1] + " as " + color);
             } catch (Exception error) {
+                // this checks what KIND of error it is
+                if (!tokens[1].matches("\\d+")) {
+                    return "Failed to join game: Game ID must be a valid number";
+                }
+                if (!tokens[2].toUpperCase().matches("WHITE") && !tokens[2].toUpperCase().matches("BLACK")) {
+                    return "Failed to join game: Color must be white or black";
+                }
                 return "Failed to join game: " + error.getMessage();
             }
         }
@@ -138,6 +172,12 @@ public class PostloginClient {
             try {
                 int ID = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
                 serverFacade.joinGame(authToken, ID, null);
+
+                //board drawing -- to be replaced
+                chess.ChessBoard board = new chess.ChessBoard();
+                board.resetBoard();
+                ChessBoardDisplay.printDefaultBoard(board, null);
+
                 return ("Successfully joined game " + tokens[1] + " as observer");
             } catch (Exception error) {
                 return "Failed to join game as observer: " + error.getMessage();
@@ -149,7 +189,7 @@ public class PostloginClient {
     public String logout() {
         try {
             serverFacade.logout(authToken);
-            return "Logout successful";
+            return "";
         } catch (Exception error) {
             return "Logout failed: " + error.getMessage();
         }

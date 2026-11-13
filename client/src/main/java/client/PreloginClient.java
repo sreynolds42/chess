@@ -75,7 +75,7 @@ public class PreloginClient {
                 PostloginClient postloginClient = new PostloginClient(serverFacade, authToken);
                 postloginClient.run();
                 // once this is done running, logs out
-                return ("Logout successful");
+                return ("");
             } catch (Exception error){
                 return "Registration failed: " + error.getMessage();
             }

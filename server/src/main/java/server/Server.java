@@ -126,6 +126,8 @@ public class Server {
             ctx.status(401);
         } else if (message.toLowerCase().contains("already taken")) {
             ctx.status(403);
+        } else if (message.toLowerCase().contains("bad request")) {
+            ctx.status(400);
         } else if (e instanceof DataAccessException) {
             ctx.status(500);
         } else {
