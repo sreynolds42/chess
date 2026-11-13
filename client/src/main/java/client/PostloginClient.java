@@ -144,9 +144,9 @@ public class PostloginClient {
     public String play(String[] tokens) {
         if (tokens.length == 3){
             try {
-                int ID = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
+                int id = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
                 String color = tokens[2].toUpperCase();
-                serverFacade.joinGame(authToken, ID, color);
+                serverFacade.joinGame(authToken, id, color);
 
                 //board drawing -- to be replaced
                 chess.ChessBoard board = new chess.ChessBoard();
@@ -171,8 +171,8 @@ public class PostloginClient {
     public String observe(String[] tokens) {
         if (tokens.length == 2){
             try {
-                int ID = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
-                serverFacade.joinGame(authToken, ID, null);
+                int id = numberedGames.get(Integer.parseInt(tokens[1]) - 1).gameID();
+                serverFacade.joinGame(authToken, id, null);
 
                 //board drawing -- to be replaced
                 chess.ChessBoard board = new chess.ChessBoard();

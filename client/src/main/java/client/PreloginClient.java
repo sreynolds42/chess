@@ -104,10 +104,3 @@ public class PreloginClient {
         return "Usage: login <USERNAME> <PASSWORD>";
     }
 }
-
-//System.out.println("create <NAME> - create game with name <NAME>");
-//                System.out.println("list - list all games");
-//                System.out.println("observe <ID> - observe game with ID");
-//                System.out.println("logout - logout of account");
-//                System.out.println("quit - quit program");
-//                System.out.println("help - list available commands");

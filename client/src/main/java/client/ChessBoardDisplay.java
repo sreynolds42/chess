@@ -4,11 +4,9 @@ import chess.*;
 
 public class ChessBoardDisplay {
     // colors for the squares
-    private static final String reset = "\u001B[0m";
-    private static final String whiteSquare = "\u001B[47m";
-    private static final String blackSquare = "\u001B[100m";
-    private static final String whiteText = "\u001B[37m";
-    private static final String blackText = "\u001B[30m";
+    private static final String RESET = "\u001B[0m";
+    private static final String WHITE_SQUARE = "\u001B[47m";
+    private static final String BLACK_SQUARE = "\u001B[100m";
     // \u2003 is emspace
 
     public static void printDefaultBoard(ChessBoard board, String playerColor){
@@ -41,15 +39,15 @@ public class ChessBoardDisplay {
 
                 String squareColor;
                 if(isBlack){
-                    squareColor = blackSquare;
+                    squareColor = BLACK_SQUARE;
                 }
                 else{
-                    squareColor = whiteSquare;
+                    squareColor = WHITE_SQUARE;
                 }
                 isBlack = !isBlack;
                 // gets the piece at r c
                 ChessPiece piece = board.getPiece(new ChessPosition(r, c));
-                System.out.print(squareColor + "\u2003" + pieceChar(piece) + "\u2003" + reset);
+                System.out.print(squareColor + "\u2003" + pieceChar(piece) + "\u2003" + RESET);
             }
             System.out.println(" " + r);
         }
