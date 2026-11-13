@@ -53,7 +53,7 @@ public class ServerFacade {
     }
 
     //makes http reqs and goes through Jason response
-    // it takes in the method, PRE POST PUT PULL or DELETE, the path,
+    // it takes in the method, PRE POST  DELETE, the path,
     private <T> T makeRequest(String method, String path, Object requestData, Class<T> responseClass, String authToken) throws Exception {
         try {
             URL url = new URL(serverUrl + path);
