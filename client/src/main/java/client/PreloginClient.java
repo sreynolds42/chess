@@ -70,7 +70,12 @@ public class PreloginClient {
                 // makes the token the authData's token and welcomes user
                 this.authToken = authData.authToken();
                 String username = authData.username();
-                return "Registered and logged in as " + username;
+                System.out.println("Registered and logged in as " + username);
+                //this shifts gears to the postlogin stuff
+                PostloginClient postloginClient = new PostloginClient(serverFacade, authToken);
+                postloginClient.run();
+                // once this is done running, logs out
+                return ("Logout successful");
             } catch (Exception error){
                 return "Registration failed: " + error.getMessage();
             }
