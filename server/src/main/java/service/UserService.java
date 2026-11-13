@@ -56,7 +56,7 @@ public class UserService {
 
         UserData user = userDAO.getUser(request.username());
 
-        if (user == null || !org.mindrot.jbcrypt.BCrypt.checkpw(request.password(), user.password())) {
+        if (user == null || !user.password().equals(request.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
 
@@ -70,7 +70,7 @@ public class UserService {
     public void logout(LogoutRequest request) throws DataAccessException {
         AuthData data = authDAO.getAuth(request.authToken());
         if(data == null){
-            throw new DataAccessException("Error: unauthorized");
+            throw new DataAccessException("Error: bad request");
         }
         authDAO.deleteAuth(request.authToken());
     }
